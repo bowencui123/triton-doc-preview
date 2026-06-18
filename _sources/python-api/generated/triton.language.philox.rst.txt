@@ -1,0 +1,6 @@
+﻿triton.language.philox
+======================
+
+.. currentmodule:: triton.language
+
+.. autofunction:: philox

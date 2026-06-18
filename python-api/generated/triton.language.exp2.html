@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+
+<html class="writer-html5" data-content_root="../../" lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>triton.language.exp2 — Triton  documentation</title>
+<link href="../../_static/pygments.css?v=03e43079" rel="stylesheet" type="text/css"/>
+<link href="../../_static/css/theme.css?v=9edc463e" rel="stylesheet" type="text/css"/>
+<link href="../../_static/sg_gallery.css?v=fd6457a4" rel="stylesheet" type="text/css"/>
+<link href="../../_static/sg_gallery-binder.css?v=f4aeca0c" rel="stylesheet" type="text/css"/>
+<link href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" rel="stylesheet" type="text/css"/>
+<link href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" rel="stylesheet" type="text/css"/>
+<link href="../../_static/sphinx-design.min.css?v=95c83b7e" rel="stylesheet" type="text/css"/>
+<link href="../../_static/myst_sphinx_gallery.css?v=92de7a9e" rel="stylesheet" type="text/css"/>
+<link href="../../_static/css/custom.css" rel="stylesheet" type="text/css"/>
+<script src="../../_static/jquery.js?v=5d32c60e"></script>
+<script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+<script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+<script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+<script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+<script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+<script src="../../_static/design-tabs.js?v=f930bc37"></script>
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+<script src="../../_static/js/theme.js"></script>
+<link href="../../genindex.html" rel="index" title="Index"/>
+<link href="../../search.html" rel="search" title="Search"/>
+<link href="triton.language.fdiv.html" rel="next" title="triton.language.fdiv"/>
+<link href="triton.language.exp.html" rel="prev" title="triton.language.exp"/>
+<style id="triton-annot">
+.triton-added{background:#e6ffec !important;box-shadow:inset 3px 0 0 #2da44e;border-radius:3px;padding:2px 4px}
+table.autosummary tr.triton-added td{background:#e6ffec !important}
+dt.triton-added,dd.triton-added{background:#e6ffec !important;box-shadow:inset 3px 0 0 #2da44e}
+div.triton-added{padding:6px 8px}
+.triton-banner{background:#dafbe1;border:1px solid #2da44e;color:#116329;padding:8px 12px;border-radius:6px;margin:12px 0;font-size:13px;line-height:1.5}
+.triton-fixed{position:fixed;right:14px;bottom:14px;background:#2da44e;color:#fff;font:12px/1 sans-serif;padding:7px 11px;border-radius:14px;z-index:9999;opacity:.92;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+</style></head>
+<body class="wy-body-for-nav">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../../index.html">
+            Triton
+              <img alt="Logo" class="logo" src="https://cdn.openai.com/triton/assets/triton-logo.png"/>
+</a>
+<div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" type="text"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+</div><div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/tutorials/index.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../triton.html">triton</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../triton.language.html">triton.language</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#programming-model">Programming Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#creation-ops">Creation Ops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#shape-manipulation-ops">Shape Manipulation Ops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#linear-algebra-ops">Linear Algebra Ops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#memory-pointer-ops">Memory/Pointer Ops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#indexing-ops">Indexing Ops</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../triton.language.html#math-ops">Math Ops</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="triton.language.abs.html">triton.language.abs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.add.html">triton.language.add</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.cdiv.html">triton.language.cdiv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.ceil.html">triton.language.ceil</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.clamp.html">triton.language.clamp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.cos.html">triton.language.cos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.div_rn.html">triton.language.div_rn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.erf.html">triton.language.erf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.exp.html">triton.language.exp</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">triton.language.exp2</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#triton.language.exp2"><code class="docutils literal notranslate"><span class="pre">exp2()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.fdiv.html">triton.language.fdiv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.floor.html">triton.language.floor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.fma.html">triton.language.fma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.log.html">triton.language.log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.log2.html">triton.language.log2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.maximum.html">triton.language.maximum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.minimum.html">triton.language.minimum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.mul.html">triton.language.mul</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.rsqrt.html">triton.language.rsqrt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.sigmoid.html">triton.language.sigmoid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.sin.html">triton.language.sin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.softmax.html">triton.language.softmax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.sqrt.html">triton.language.sqrt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.sqrt_rn.html">triton.language.sqrt_rn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.sub.html">triton.language.sub</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triton.language.umulhi.html">triton.language.umulhi</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#reduction-ops">Reduction Ops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#scan-sort-ops">Scan/Sort Ops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#atomic-ops">Atomic Ops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#random-number-generation">Random Number Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#iterators">Iterators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#inline-assembly">Inline Assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#compiler-hint-ops">Compiler Hint Ops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../triton.language.html#debug-ops">Debug Ops</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../triton.testing.html">triton.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../triton-semantics.html">Triton Semantics</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Gluon</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gluon/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/tutorials/gluon/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples/gluon/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gluon/api/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Triton MLIR Dialects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dialects/dialects.html">Triton MLIR Dialects and Ops</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-1/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-2/related-work.html">Related Work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-3/debugging.html">Debugging Triton</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-3/fpsan.html">Floating-Point Sanitizer (FpSan)</a></li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift"><nav aria-label="Mobile navigation menu" class="wy-nav-top">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../../index.html">Triton</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="Page navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Home" class="icon icon-home" href="../../index.html"></a></li>
+<li class="breadcrumb-item"><a href="../triton.language.html">triton.language</a></li>
+<li class="breadcrumb-item active">triton.language.exp2</li>
+<li class="wy-breadcrumbs-aside">
+<a href="../../_sources/python-api/generated/triton.language.exp2.rst.txt" rel="nofollow"> View page source</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<section id="triton-language-exp2">
+<h1>triton.language.exp2<a class="headerlink" href="#triton-language-exp2" title="Link to this heading"></a></h1><div class="triton-banner"><b>GREEN highlights = NEW or CHANGED</b> relative to upstream Triton (formula / example / Returns / params).  绿色 = 相比官方原版的新增或修改。 Un-annotated clean version is on the <code>main</code> branch.</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="triton.language.exp2">
+<span class="sig-prename descclassname"><span class="pre">triton.language.</span></span><span class="sig-name descname"><span class="pre">exp2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_semantic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#triton.language.exp2" title="Link to this definition"></a></dt>
+<dd><p>Computes the element-wise exponential (base 2) of <code class="code docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Block</em>) – the input values</p>
+</dd>
+<dt class="field-even triton-added">Returns<span class="colon">:</span></dt>
+<dd class="field-even triton-added"><p>A <code class="code docutils literal notranslate"><span class="pre">Block</span></code> with the same shape and dtype as <code class="code docutils literal notranslate"><span class="pre">x</span></code>, holding the element-wise result.</p>
+</dd>
+<dt class="field-odd triton-added">Return type<span class="colon">:</span></dt>
+<dd class="field-odd triton-added"><p>Block</p>
+</dd>
+</dl>
+<div class="math notranslate nohighlight triton-added">
+\[\operatorname{exp2}(x) = 2^{x}\]</div>
+<p>Example:</p>
+<div class="highlight-default notranslate triton-added"><div class="highlight triton-added"><pre><span></span><span class="nd">@triton</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="n">in_ptr</span><span class="p">,</span> <span class="n">out_ptr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">BLOCK</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">):</span>
+    <span class="n">offs</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">BLOCK</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">offs</span> <span class="o">&lt;</span> <span class="n">n</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_ptr</span> <span class="o">+</span> <span class="n">offs</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">exp2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">tl</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">out_ptr</span> <span class="o">+</span> <span class="n">offs</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+<div class="triton-fixed">GREEN = added vs upstream</div></div>
+<footer><div aria-label="Footer" class="rst-footer-buttons" role="navigation">
+<a accesskey="p" class="btn btn-neutral float-left" href="triton.language.exp.html" rel="prev" title="triton.language.exp"><span aria-hidden="true" class="fa fa-arrow-circle-left"></span> Previous</a>
+<a accesskey="n" class="btn btn-neutral float-right" href="triton.language.fdiv.html" rel="next" title="triton.language.fdiv">Next <span aria-hidden="true" class="fa fa-arrow-circle-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<p>© Copyright 2020, Philippe Tillet.</p>
+</div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+</div>
+</div>
+</section>
+</div>
+<script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+</body>
+</html>

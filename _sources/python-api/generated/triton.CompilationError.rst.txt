@@ -1,0 +1,6 @@
+﻿triton.CompilationError
+=======================
+
+.. currentmodule:: triton
+
+.. autoexception:: CompilationError

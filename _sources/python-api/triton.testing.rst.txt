@@ -1,0 +1,28 @@
+triton.testing
+==============
+
+.. currentmodule:: triton.testing
+
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+
+    Benchmark
+    do_bench
+    do_bench_proton
+    do_bench_cudagraph
+    do_bench_cudagraph_proton
+    perf_report
+    assert_close
+
+
+GPU Characterization
+--------------------
+
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+
+    get_dram_gbps
+    get_max_tensorcore_tflops
+    get_max_simd_tflops

@@ -1,0 +1,6 @@
+﻿triton.language.aggregate\_replace
+==================================
+
+.. currentmodule:: triton.language
+
+.. autofunction:: aggregate_replace

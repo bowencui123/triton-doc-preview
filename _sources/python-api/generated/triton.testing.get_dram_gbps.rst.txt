@@ -1,0 +1,6 @@
+﻿triton.testing.get\_dram\_gbps
+==============================
+
+.. currentmodule:: triton.testing
+
+.. autofunction:: get_dram_gbps
