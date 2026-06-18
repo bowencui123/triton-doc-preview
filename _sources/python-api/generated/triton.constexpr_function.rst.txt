@@ -1,0 +1,6 @@
+﻿triton.constexpr\_function
+==========================
+
+.. currentmodule:: triton
+
+.. autofunction:: constexpr_function

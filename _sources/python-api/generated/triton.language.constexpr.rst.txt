@@ -1,0 +1,30 @@
+﻿triton.language.constexpr
+=========================
+
+.. currentmodule:: triton.language
+
+.. autoclass:: constexpr
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~constexpr.__init__
+      ~constexpr.logical_and
+      ~constexpr.logical_or
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~constexpr.type
+   
+   

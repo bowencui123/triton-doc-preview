@@ -1,0 +1,6 @@
+﻿triton.aggregate
+================
+
+.. currentmodule:: triton
+
+.. autofunction:: aggregate

@@ -1,0 +1,6 @@
+﻿triton.language.pair\_uniform\_to\_normal
+=========================================
+
+.. currentmodule:: triton.language
+
+.. autofunction:: pair_uniform_to_normal

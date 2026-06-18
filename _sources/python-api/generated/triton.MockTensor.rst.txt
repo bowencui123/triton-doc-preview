@@ -1,0 +1,26 @@
+﻿triton.MockTensor
+=================
+
+.. currentmodule:: triton
+
+.. autoclass:: MockTensor
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MockTensor.__init__
+      ~MockTensor.data_ptr
+      ~MockTensor.ptr_range
+      ~MockTensor.stride
+      ~MockTensor.wrap_dtype
+   
+   
+
+   
+   
+   

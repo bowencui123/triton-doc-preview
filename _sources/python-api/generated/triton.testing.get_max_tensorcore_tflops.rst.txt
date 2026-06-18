@@ -1,0 +1,6 @@
+﻿triton.testing.get\_max\_tensorcore\_tflops
+===========================================
+
+.. currentmodule:: triton.testing
+
+.. autofunction:: get_max_tensorcore_tflops
