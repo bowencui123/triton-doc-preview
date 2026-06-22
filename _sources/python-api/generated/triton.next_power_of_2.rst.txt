@@ -1,0 +1,6 @@
+﻿triton.next\_power\_of\_2
+=========================
+
+.. currentmodule:: triton
+
+.. autofunction:: next_power_of_2

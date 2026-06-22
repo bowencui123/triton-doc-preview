@@ -1,0 +1,6 @@
+﻿triton.must\_use\_result
+========================
+
+.. currentmodule:: triton
+
+.. autofunction:: must_use_result

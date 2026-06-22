@@ -1,0 +1,31 @@
+﻿triton.language.PropagateNan
+============================
+
+.. currentmodule:: triton.language
+
+.. autoclass:: PropagateNan
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PropagateNan.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PropagateNan.ALL
+      ~PropagateNan.NONE
+      ~PropagateNan.name
+      ~PropagateNan.value
+   
+   

@@ -1,0 +1,6 @@
+﻿triton.language.TRITON\_MAX\_TENSOR\_NUMEL
+==========================================
+
+.. currentmodule:: triton.language
+
+.. autodata:: TRITON_MAX_TENSOR_NUMEL

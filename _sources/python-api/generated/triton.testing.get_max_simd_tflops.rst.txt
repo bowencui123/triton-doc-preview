@@ -1,0 +1,6 @@
+﻿triton.testing.get\_max\_simd\_tflops
+=====================================
+
+.. currentmodule:: triton.testing
+
+.. autofunction:: get_max_simd_tflops
