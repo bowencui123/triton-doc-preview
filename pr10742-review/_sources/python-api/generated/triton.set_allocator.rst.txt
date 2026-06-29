@@ -1,0 +1,6 @@
+﻿triton.set\_allocator
+=====================
+
+.. currentmodule:: triton
+
+.. autofunction:: set_allocator

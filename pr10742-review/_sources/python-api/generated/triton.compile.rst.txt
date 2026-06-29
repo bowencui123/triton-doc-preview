@@ -1,0 +1,6 @@
+﻿triton.compile
+==============
+
+.. currentmodule:: triton
+
+.. autofunction:: compile

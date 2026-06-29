@@ -1,0 +1,6 @@
+﻿triton.cdiv
+===========
+
+.. currentmodule:: triton
+
+.. autofunction:: cdiv

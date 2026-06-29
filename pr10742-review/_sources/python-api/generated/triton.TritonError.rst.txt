@@ -1,0 +1,6 @@
+﻿triton.TritonError
+==================
+
+.. currentmodule:: triton
+
+.. autoexception:: TritonError

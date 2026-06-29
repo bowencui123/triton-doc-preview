@@ -1,0 +1,30 @@
+﻿triton.TensorWrapper
+====================
+
+.. currentmodule:: triton
+
+.. autoclass:: TensorWrapper
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TensorWrapper.__init__
+      ~TensorWrapper.clone
+      ~TensorWrapper.copy_
+      ~TensorWrapper.cpu
+      ~TensorWrapper.data_ptr
+      ~TensorWrapper.element_size
+      ~TensorWrapper.new_empty
+      ~TensorWrapper.stride
+      ~TensorWrapper.to
+   
+   
+
+   
+   
+   
