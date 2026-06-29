@@ -1,0 +1,23 @@
+﻿triton.AsyncCompileMode
+=======================
+
+.. currentmodule:: triton
+
+.. autoclass:: AsyncCompileMode
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AsyncCompileMode.__init__
+      ~AsyncCompileMode.submit
+   
+   
+
+   
+   
+   

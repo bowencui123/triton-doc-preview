@@ -1,0 +1,7 @@
+Triton top-level API (PR #10742 preview)
+========================================
+
+.. toctree::
+   :maxdepth: 2
+
+   triton
