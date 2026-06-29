@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>triton — top-level API (PR #10742 preview) &mdash; Triton top-level API — PR #10742 preview  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Triton top-level API — PR #10742 preview
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">triton — top-level API (PR #10742 preview)</a><ul>
+<li><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li><a class="reference internal" href="#triton.compile"><code class="docutils literal notranslate"><span class="pre">compile()</span></code></a></li>
+<li><a class="reference internal" href="#triton.AsyncCompileMode"><code class="docutils literal notranslate"><span class="pre">AsyncCompileMode</span></code></a></li>
+<li><a class="reference internal" href="#triton.FutureKernel"><code class="docutils literal notranslate"><span class="pre">FutureKernel</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#jit">JIT</a><ul>
+<li><a class="reference internal" href="#triton.JITFunction"><code class="docutils literal notranslate"><span class="pre">JITFunction</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#autotuning">Autotuning</a></li>
+<li><a class="reference internal" href="#tensor-reinterpretation">Tensor Reinterpretation</a><ul>
+<li><a class="reference internal" href="#triton.reinterpret"><code class="docutils literal notranslate"><span class="pre">reinterpret()</span></code></a></li>
+<li><a class="reference internal" href="#triton.TensorWrapper"><code class="docutils literal notranslate"><span class="pre">TensorWrapper</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#memory">Memory</a><ul>
+<li><a class="reference internal" href="#triton.set_allocator"><code class="docutils literal notranslate"><span class="pre">set_allocator()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#utilities">Utilities</a><ul>
+<li><a class="reference internal" href="#triton.cdiv"><code class="docutils literal notranslate"><span class="pre">cdiv()</span></code></a></li>
+<li><a class="reference internal" href="#triton.next_power_of_2"><code class="docutils literal notranslate"><span class="pre">next_power_of_2()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#exceptions">Exceptions</a><ul>
+<li><a class="reference internal" href="#triton.TritonError"><code class="docutils literal notranslate"><span class="pre">TritonError</span></code></a></li>
+<li><a class="reference internal" href="#triton.CompilationError"><code class="docutils literal notranslate"><span class="pre">CompilationError</span></code></a></li>
+<li><a class="reference internal" href="#triton.OutOfResources"><code class="docutils literal notranslate"><span class="pre">OutOfResources</span></code></a></li>
+<li><a class="reference internal" href="#triton.InterpreterError"><code class="docutils literal notranslate"><span class="pre">InterpreterError</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Triton top-level API — PR #10742 preview</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">triton — top-level API (PR #10742 preview)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="triton-top-level-api-pr-10742-preview">
+<h1>triton — top-level API (PR #10742 preview)<a class="headerlink" href="#triton-top-level-api-pr-10742-preview" title="Link to this heading"></a></h1>
+<p>Rendered with the official <code class="docutils literal notranslate"><span class="pre">sphinx_rtd_theme</span></code>. This previews the entries that
+<a class="reference external" href="https://github.com/triton-lang/triton/pull/10742">PR #10742</a> adds to the
+top-level <code class="docutils literal notranslate"><span class="pre">docs/python-api/triton.rst</span></code> page (which previously listed only
+<code class="docutils literal notranslate"><span class="pre">jit</span></code>, <code class="docutils literal notranslate"><span class="pre">autotune</span></code>, <code class="docutils literal notranslate"><span class="pre">heuristics</span></code> and <code class="docutils literal notranslate"><span class="pre">Config</span></code>). Each entry below shows its
+signature and the docstring that will appear on its generated page. The four
+pre-existing entries are unchanged and shown by name only.</p>
+<section id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="triton.compile">
+<span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#triton.compile" title="Link to this definition"></a></dt>
+<dd><p>Compiles a kernel to a device binary.</p>
+<p>This is the lowering entry point used by <code class="xref py py-func docutils literal notranslate"><span class="pre">triton.jit()</span></code>; it can also be
+called directly for ahead-of-time compilation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> – the kernel to compile, given either as an <code class="code docutils literal notranslate"><span class="pre">ASTSource</span></code>
+(a <code class="docutils literal notranslate"><span class="pre">&#64;triton.jit</span></code> function together with its signature) or as a path or
+string pointing at a textual IR module.</p></li>
+<li><p><strong>target</strong> – the <code class="code docutils literal notranslate"><span class="pre">GPUTarget</span></code> to compile for; defaults to the target of
+the currently active device.</p></li>
+<li><p><strong>options</strong> – backend-specific compilation options (e.g. <code class="code docutils literal notranslate"><span class="pre">num_warps</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">num_stages</span></code>) layered over the backend defaults.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a compiled kernel that can be launched on the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="triton.AsyncCompileMode">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">AsyncCompileMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executor</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#triton.AsyncCompileMode" title="Link to this definition"></a></dt>
+<dd><p>A context manager that compiles kernels asynchronously on an executor.</p>
+<p>Inside the <code class="docutils literal notranslate"><span class="pre">with</span></code> block, kernel compilations triggered by launches are
+submitted to the given <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.Executor</span></code> and run in the
+background, each returning a <a class="reference internal" href="#triton.FutureKernel" title="triton.FutureKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FutureKernel</span></code></a>. Any compiles still
+outstanding are finalized when the block exits.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="triton.FutureKernel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">FutureKernel</span></span><a class="headerlink" href="#triton.FutureKernel" title="Link to this definition"></a></dt>
+<dd><p>A handle to a kernel that is being compiled asynchronously.</p>
+<p>Returned by <a class="reference internal" href="#triton.AsyncCompileMode" title="triton.AsyncCompileMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncCompileMode</span></code></a> when a compilation is submitted. Call
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">result()</span></code> to block until the kernel is ready; attribute access on the
+handle also transparently waits for compilation to finish and forwards to the
+compiled kernel.</p>
+</dd></dl>
+
+</section>
+<section id="jit">
+<h2>JIT<a class="headerlink" href="#jit" title="Link to this heading"></a></h2>
+<p><em>Unchanged:</em> <code class="docutils literal notranslate"><span class="pre">jit</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="triton.JITFunction">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">JITFunction</span></span><a class="headerlink" href="#triton.JITFunction" title="Link to this definition"></a></dt>
+<dd><p>A just-in-time compiled Triton kernel.</p>
+<p>Instances are produced by applying the <code class="xref py py-func docutils literal notranslate"><span class="pre">triton.jit()</span></code> decorator to a Python
+function and are rarely constructed directly. A kernel is launched with the
+<code class="docutils literal notranslate"><span class="pre">kernel[grid](*args,</span> <span class="pre">**kwargs)</span></code> syntax: on the first launch for a given set of
+argument types the kernel is specialized and compiled, and the result is cached
+for subsequent launches.</p>
+</dd></dl>
+
+</section>
+<section id="autotuning">
+<h2>Autotuning<a class="headerlink" href="#autotuning" title="Link to this heading"></a></h2>
+<p><em>Unchanged:</em> <code class="docutils literal notranslate"><span class="pre">autotune</span></code>, <code class="docutils literal notranslate"><span class="pre">heuristics</span></code>, <code class="docutils literal notranslate"><span class="pre">Config</span></code></p>
+</section>
+<section id="tensor-reinterpretation">
+<h2>Tensor Reinterpretation<a class="headerlink" href="#tensor-reinterpretation" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="triton.reinterpret">
+<span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">reinterpret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#triton.reinterpret" title="Link to this definition"></a></dt>
+<dd><p>Reinterprets a tensor’s data as a different element type, without copying.</p>
+<p>This is a bitcast-like view: the underlying bytes are unchanged and only their
+interpretation differs. Useful for element types that have no native framework
+dtype (for example the 8-bit floating-point formats).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tensor</strong> – the tensor whose data should be reinterpreted.</p></li>
+<li><p><strong>dtype</strong> – the Triton dtype to interpret the data as.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a <a class="reference internal" href="#triton.TensorWrapper" title="triton.TensorWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">TensorWrapper</span></code></a> viewing <code class="code docutils literal notranslate"><span class="pre">tensor</span></code> as <code class="code docutils literal notranslate"><span class="pre">dtype</span></code> (or
+the original tensor when the reinterpretation is a no-op).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="triton.TensorWrapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">TensorWrapper</span></span><a class="headerlink" href="#triton.TensorWrapper" title="Link to this definition"></a></dt>
+<dd><p>Presents a tensor under a different element type.</p>
+<p>Returned by <a class="reference internal" href="#triton.reinterpret" title="triton.reinterpret"><code class="xref py py-func docutils literal notranslate"><span class="pre">triton.reinterpret()</span></code></a>. The wrapper forwards the storage,
+shape, strides, and device of the wrapped tensor while reporting <code class="xref py py-attr docutils literal notranslate"><span class="pre">dtype</span></code>
+as the new type, so a kernel reads the same bytes under a different
+interpretation.</p>
+</dd></dl>
+
+</section>
+<section id="memory">
+<h2>Memory<a class="headerlink" href="#memory" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="triton.set_allocator">
+<span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">set_allocator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allocator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#triton.set_allocator" title="Link to this definition"></a></dt>
+<dd><p>The allocator function is called during kernel launch for kernels that
+require additional global memory workspace.</p>
+</dd></dl>
+
+</section>
+<section id="utilities">
+<h2>Utilities<a class="headerlink" href="#utilities" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="triton.cdiv">
+<span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">cdiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#triton.cdiv" title="Link to this definition"></a></dt>
+<dd><p>Returns the ceiling division of <code class="code docutils literal notranslate"><span class="pre">x</span></code> by <code class="code docutils literal notranslate"><span class="pre">y</span></code> (that is, <code class="code docutils literal notranslate"><span class="pre">x</span> <span class="pre">/</span> <span class="pre">y</span></code>
+rounded up to the nearest integer).</p>
+<p>Commonly used on the host to size a launch grid, e.g.
+<code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">=</span> <span class="pre">(triton.cdiv(n_elements,</span> <span class="pre">BLOCK_SIZE),</span> <span class="pre">)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – the dividend.</p></li>
+<li><p><strong>y</strong> – the divisor.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="triton.next_power_of_2">
+<span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">next_power_of_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#triton.next_power_of_2" title="Link to this definition"></a></dt>
+<dd><p>Return the smallest power of 2 greater than or equal to n</p>
+</dd></dl>
+
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="triton.TritonError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">TritonError</span></span><a class="headerlink" href="#triton.TritonError" title="Link to this definition"></a></dt>
+<dd><p>Base class for all errors raised by Triton. <em>(listed without a docstring in
+the PR — its generated page shows just</em> <code class="docutils literal notranslate"><span class="pre">Bases:</span> <span class="pre">Exception</span></code> <em>)</em></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="triton.CompilationError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">CompilationError</span></span><a class="headerlink" href="#triton.CompilationError" title="Link to this definition"></a></dt>
+<dd><p>Base class for all errors raised during compilation</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="triton.OutOfResources">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">OutOfResources</span></span><a class="headerlink" href="#triton.OutOfResources" title="Link to this definition"></a></dt>
+<dd><p>Raised when a kernel needs more of a hardware resource than is available,
+for example more shared memory or registers than the device provides.</p>
+<p>Reducing block sizes or <code class="code docutils literal notranslate"><span class="pre">num_stages</span></code> often resolves it. The resource is
+named by <code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code>, with the requested and available amounts in
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">required</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">limit</span></code>.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="triton.InterpreterError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triton.</span></span><span class="sig-name descname"><span class="pre">InterpreterError</span></span><a class="headerlink" href="#triton.InterpreterError" title="Link to this definition"></a></dt>
+<dd><p>Raised when an error occurs while executing a kernel in the interpreter (<code class="code docutils literal notranslate"><span class="pre">TRITON_INTERPRET=1</span></code>).</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

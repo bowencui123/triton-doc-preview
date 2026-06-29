@@ -1,0 +1,144 @@
+triton — top-level API (PR #10742 preview)
+==========================================
+
+.. currentmodule:: triton
+
+Rendered with the official ``sphinx_rtd_theme``. This previews the entries that
+`PR #10742 <https://github.com/triton-lang/triton/pull/10742>`_ adds to the
+top-level ``docs/python-api/triton.rst`` page (which previously listed only
+``jit``, ``autotune``, ``heuristics`` and ``Config``). Each entry below shows its
+signature and the docstring that will appear on its generated page. The four
+pre-existing entries are unchanged and shown by name only.
+
+Compilation
+-----------
+
+.. py:function:: compile(src, target=None, options=None)
+
+    Compiles a kernel to a device binary.
+
+    This is the lowering entry point used by :func:`triton.jit`; it can also be
+    called directly for ahead-of-time compilation.
+
+    :param src: the kernel to compile, given either as an :code:`ASTSource`
+        (a ``@triton.jit`` function together with its signature) or as a path or
+        string pointing at a textual IR module.
+    :param target: the :code:`GPUTarget` to compile for; defaults to the target of
+        the currently active device.
+    :param options: backend-specific compilation options (e.g. :code:`num_warps`,
+        :code:`num_stages`) layered over the backend defaults.
+    :returns: a compiled kernel that can be launched on the device.
+
+.. py:class:: AsyncCompileMode(executor, *, ignore_errors=False)
+
+    A context manager that compiles kernels asynchronously on an executor.
+
+    Inside the ``with`` block, kernel compilations triggered by launches are
+    submitted to the given :code:`concurrent.futures.Executor` and run in the
+    background, each returning a :class:`FutureKernel`. Any compiles still
+    outstanding are finalized when the block exits.
+
+.. py:class:: FutureKernel
+
+    A handle to a kernel that is being compiled asynchronously.
+
+    Returned by :class:`AsyncCompileMode` when a compilation is submitted. Call
+    :meth:`result` to block until the kernel is ready; attribute access on the
+    handle also transparently waits for compilation to finish and forwards to the
+    compiled kernel.
+
+JIT
+---
+
+*Unchanged:* ``jit``
+
+.. py:class:: JITFunction
+
+    A just-in-time compiled Triton kernel.
+
+    Instances are produced by applying the :func:`triton.jit` decorator to a Python
+    function and are rarely constructed directly. A kernel is launched with the
+    ``kernel[grid](*args, **kwargs)`` syntax: on the first launch for a given set of
+    argument types the kernel is specialized and compiled, and the result is cached
+    for subsequent launches.
+
+Autotuning
+----------
+
+*Unchanged:* ``autotune``, ``heuristics``, ``Config``
+
+Tensor Reinterpretation
+-----------------------
+
+.. py:function:: reinterpret(tensor, dtype)
+
+    Reinterprets a tensor's data as a different element type, without copying.
+
+    This is a bitcast-like view: the underlying bytes are unchanged and only their
+    interpretation differs. Useful for element types that have no native framework
+    dtype (for example the 8-bit floating-point formats).
+
+    :param tensor: the tensor whose data should be reinterpreted.
+    :param dtype: the Triton dtype to interpret the data as.
+    :returns: a :class:`TensorWrapper` viewing :code:`tensor` as :code:`dtype` (or
+        the original tensor when the reinterpretation is a no-op).
+
+.. py:class:: TensorWrapper
+
+    Presents a tensor under a different element type.
+
+    Returned by :func:`triton.reinterpret`. The wrapper forwards the storage,
+    shape, strides, and device of the wrapped tensor while reporting :attr:`dtype`
+    as the new type, so a kernel reads the same bytes under a different
+    interpretation.
+
+Memory
+------
+
+.. py:function:: set_allocator(allocator)
+
+    The allocator function is called during kernel launch for kernels that
+    require additional global memory workspace.
+
+Utilities
+---------
+
+.. py:function:: cdiv(x, y)
+
+    Returns the ceiling division of :code:`x` by :code:`y` (that is, :code:`x / y`
+    rounded up to the nearest integer).
+
+    Commonly used on the host to size a launch grid, e.g.
+    ``grid = (triton.cdiv(n_elements, BLOCK_SIZE), )``.
+
+    :param x: the dividend.
+    :param y: the divisor.
+
+.. py:function:: next_power_of_2(n)
+
+    Return the smallest power of 2 greater than or equal to n
+
+Exceptions
+----------
+
+.. py:exception:: TritonError
+
+    Base class for all errors raised by Triton. *(listed without a docstring in
+    the PR — its generated page shows just* ``Bases: Exception`` *)*
+
+.. py:exception:: CompilationError
+
+    Base class for all errors raised during compilation
+
+.. py:exception:: OutOfResources
+
+    Raised when a kernel needs more of a hardware resource than is available,
+    for example more shared memory or registers than the device provides.
+
+    Reducing block sizes or :code:`num_stages` often resolves it. The resource is
+    named by :attr:`name`, with the requested and available amounts in
+    :attr:`required` and :attr:`limit`.
+
+.. py:exception:: InterpreterError
+
+    Raised when an error occurs while executing a kernel in the interpreter (:code:`TRITON_INTERPRET=1`).
