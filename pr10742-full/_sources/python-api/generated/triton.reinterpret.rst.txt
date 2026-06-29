@@ -1,0 +1,6 @@
+﻿triton.reinterpret
+==================
+
+.. currentmodule:: triton
+
+.. autofunction:: reinterpret

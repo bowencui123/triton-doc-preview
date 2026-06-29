@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>triton &mdash; Triton  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../_static/myst_sphinx_gallery.css?v=92de7a9e" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="triton.compile" href="generated/triton.compile.html" />
+    <link rel="prev" title="Block Scaled Matrix Multiplication" href="../getting-started/tutorials/10-block-scaled-matmul.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Triton
+              <img src="https://cdn.openai.com/triton/assets/triton-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/tutorials/index.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">triton</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.compile.html">triton.compile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.AsyncCompileMode.html">triton.AsyncCompileMode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.FutureKernel.html">triton.FutureKernel</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#jit">JIT</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.jit.html">triton.jit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.JITFunction.html">triton.JITFunction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#autotuning">Autotuning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.autotune.html">triton.autotune</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.heuristics.html">triton.heuristics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.Config.html">triton.Config</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tensor-reinterpretation">Tensor Reinterpretation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.reinterpret.html">triton.reinterpret</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.TensorWrapper.html">triton.TensorWrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#memory">Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.set_allocator.html">triton.set_allocator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities">Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.cdiv.html">triton.cdiv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.next_power_of_2.html">triton.next_power_of_2</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions">Exceptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.TritonError.html">triton.TritonError</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.CompilationError.html">triton.CompilationError</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.OutOfResources.html">triton.OutOfResources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triton.InterpreterError.html">triton.InterpreterError</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="triton.language.html">triton.language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="triton.testing.html">triton.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="triton-semantics.html">Triton Semantics</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Gluon</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../gluon/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/tutorials/gluon/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/examples/gluon/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gluon/api/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../programming-guide/chapter-1/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../programming-guide/chapter-2/related-work.html">Related Work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../programming-guide/chapter-3/debugging.html">Debugging Triton</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../programming-guide/chapter-3/fpsan.html">Floating-Point Sanitizer (FpSan)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Triton</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">triton</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/python-api/triton.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="triton">
+<h1>triton<a class="headerlink" href="#triton" title="Link to this heading"></a></h1>
+<section id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.compile.html#triton.compile" title="triton.compile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compile</span></code></a></p></td>
+<td><p>Compiles a kernel to a device binary.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triton.AsyncCompileMode.html#triton.AsyncCompileMode" title="triton.AsyncCompileMode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AsyncCompileMode</span></code></a></p></td>
+<td><p>A context manager that compiles kernels asynchronously on an executor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.FutureKernel.html#triton.FutureKernel" title="triton.FutureKernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FutureKernel</span></code></a></p></td>
+<td><p>A handle to a kernel that is being compiled asynchronously.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="jit">
+<h2>JIT<a class="headerlink" href="#jit" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.jit.html#triton.jit" title="triton.jit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jit</span></code></a></p></td>
+<td><p>Decorator for JIT-compiling a function using the Triton compiler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triton.JITFunction.html#triton.JITFunction" title="triton.JITFunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JITFunction</span></code></a></p></td>
+<td><p>A just-in-time compiled Triton kernel.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="autotuning">
+<h2>Autotuning<a class="headerlink" href="#autotuning" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.autotune.html#triton.autotune" title="triton.autotune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autotune</span></code></a></p></td>
+<td><p>Decorator for auto-tuning a <code class="code docutils literal notranslate"><span class="pre">triton.jit</span></code>'d function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triton.heuristics.html#triton.heuristics" title="triton.heuristics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">heuristics</span></code></a></p></td>
+<td><p>Decorator for specifying how the values of certain meta-parameters may be computed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.Config.html#triton.Config" title="triton.Config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Config</span></code></a></p></td>
+<td><p>An object that represents a possible kernel configuration for the auto-tuner to try.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="tensor-reinterpretation">
+<h2>Tensor Reinterpretation<a class="headerlink" href="#tensor-reinterpretation" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.reinterpret.html#triton.reinterpret" title="triton.reinterpret"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reinterpret</span></code></a></p></td>
+<td><p>Reinterprets a tensor's data as a different element type, without copying.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triton.TensorWrapper.html#triton.TensorWrapper" title="triton.TensorWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TensorWrapper</span></code></a></p></td>
+<td><p>Presents a tensor under a different element type.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="memory">
+<h2>Memory<a class="headerlink" href="#memory" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.set_allocator.html#triton.set_allocator" title="triton.set_allocator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_allocator</span></code></a></p></td>
+<td><p>The allocator function is called during kernel launch for kernels that require additional global memory workspace.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="utilities">
+<h2>Utilities<a class="headerlink" href="#utilities" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.cdiv.html#triton.cdiv" title="triton.cdiv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cdiv</span></code></a></p></td>
+<td><p>Returns the ceiling division of <code class="code docutils literal notranslate"><span class="pre">x</span></code> by <code class="code docutils literal notranslate"><span class="pre">y</span></code> (that is, <code class="code docutils literal notranslate"><span class="pre">x</span> <span class="pre">/</span> <span class="pre">y</span></code> rounded up to the nearest integer).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triton.next_power_of_2.html#triton.next_power_of_2" title="triton.next_power_of_2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next_power_of_2</span></code></a></p></td>
+<td><p>Return the smallest power of 2 greater than or equal to n</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.TritonError.html#triton.TritonError" title="triton.TritonError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TritonError</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triton.CompilationError.html#triton.CompilationError" title="triton.CompilationError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CompilationError</span></code></a></p></td>
+<td><p>Base class for all errors raised during compilation</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triton.OutOfResources.html#triton.OutOfResources" title="triton.OutOfResources"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OutOfResources</span></code></a></p></td>
+<td><p>Raised when a kernel needs more of a hardware resource than is available, for example more shared memory or registers than the device provides.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triton.InterpreterError.html#triton.InterpreterError" title="triton.InterpreterError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InterpreterError</span></code></a></p></td>
+<td><p>Raised when an error occurs while executing a kernel in the interpreter (<code class="code docutils literal notranslate"><span class="pre">TRITON_INTERPRET=1</span></code>).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../getting-started/tutorials/10-block-scaled-matmul.html" class="btn btn-neutral float-left" title="Block Scaled Matrix Multiplication" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/triton.compile.html" class="btn btn-neutral float-right" title="triton.compile" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Philippe Tillet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

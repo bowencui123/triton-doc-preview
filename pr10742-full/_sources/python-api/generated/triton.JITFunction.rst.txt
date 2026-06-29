@@ -1,0 +1,39 @@
+﻿triton.JITFunction
+==================
+
+.. currentmodule:: triton
+
+.. autoclass:: JITFunction
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JITFunction.__init__
+      ~JITFunction.add_pre_run_hook
+      ~JITFunction.create_binder
+      ~JITFunction.get_capture_scope
+      ~JITFunction.is_gluon
+      ~JITFunction.parse
+      ~JITFunction.preload
+      ~JITFunction.repr
+      ~JITFunction.run
+      ~JITFunction.warmup
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JITFunction.cache_key
+      ~JITFunction.src
+      ~JITFunction.type
+   
+   

@@ -1,0 +1,6 @@
+﻿triton.OutOfResources
+=====================
+
+.. currentmodule:: triton
+
+.. autoexception:: OutOfResources

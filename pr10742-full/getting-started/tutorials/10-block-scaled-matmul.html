@@ -1,0 +1,928 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Block Scaled Matrix Multiplication &mdash; Triton  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/myst_sphinx_gallery.css?v=92de7a9e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+      <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="triton" href="../../python-api/triton.html" />
+    <link rel="prev" title="Persistent Matmul" href="09-persistent-matmul.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Triton
+              <img src="https://cdn.openai.com/triton/assets/triton-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01-vector-add.html">Vector Addition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-fused-softmax.html">Fused Softmax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-matrix-multiplication.html">Matrix Multiplication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-low-memory-dropout.html">Low-Memory Dropout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-layer-norm.html">Layer Normalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06-fused-attention.html">Fused Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07-extern-functions.html">Libdevice (<cite>tl.extra.libdevice</cite>) function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08-grouped-gemm.html">Group GEMM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09-persistent-matmul.html">Persistent Matmul</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Block Scaled Matrix Multiplication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#background">Background</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../python-api/triton.html">triton</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../python-api/triton.language.html">triton.language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../python-api/triton.testing.html">triton.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../python-api/triton-semantics.html">Triton Semantics</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Gluon</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gluon/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gluon/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/gluon/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gluon/api/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-1/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-2/related-work.html">Related Work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-3/debugging.html">Debugging Triton</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-3/fpsan.html">Floating-Point Sanitizer (FpSan)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Triton</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">Block Scaled Matrix Multiplication</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/getting-started/tutorials/10-block-scaled-matmul.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-getting-started-tutorials-10-block-scaled-matmul-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="block-scaled-matrix-multiplication">
+<span id="sphx-glr-getting-started-tutorials-10-block-scaled-matmul-py"></span><h1>Block Scaled Matrix Multiplication<a class="headerlink" href="#block-scaled-matrix-multiplication" title="Link to this heading"></a></h1>
+<p>This tutorial demonstrates a Triton implementation of block scaled matrix multiplication
+which is generic over FP4 and FP8 formats on NVIDIA and AMD GPUs.
+The tutorial supports OCP microscaling formats such as mxfp4 and mxfp8, and NVIDIA’s nvfp4
+(on NVIDIA GPUs) and mxfp4 (on AMD GPUs). These matrix multiplications are hardware-accelerated
+using fifth-generation Tensor Cores on NVIDIA GPUs with compute capability 10, and by the CDNA4
+matrix cores on AMD GPUs.
+Users can run the tutorial with each of the supported formats by passing the <cite>–format</cite>
+argument and can benchmark the performance of each by specifying matrix dimensions
+and iteration steps.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># FP4</span>
+python<span class="w"> </span><span class="m">10</span>-block-scaled-matmul.py<span class="w"> </span>--format<span class="w"> </span>nvfp4
+python<span class="w"> </span><span class="m">10</span>-block-scaled-matmul.py<span class="w"> </span>--format<span class="w"> </span>mxfp4<span class="w"> </span>--K_range<span class="w"> </span><span class="m">512</span><span class="w"> </span><span class="m">8192</span><span class="w"> </span>--bench
+
+<span class="c1"># FP8</span>
+python<span class="w"> </span><span class="m">10</span>-block-scaled-matmul.py<span class="w"> </span>--format<span class="w"> </span>mxfp8<span class="w"> </span>--K_range<span class="w"> </span><span class="m">8192</span><span class="w"> </span><span class="m">16384</span><span class="w"> </span>--K_step<span class="w"> </span><span class="m">2048</span><span class="w"> </span>--bench
+</pre></div>
+</div>
+<p>Future updates to this tutorial which support mixed precision block scaled matmul are planned.</p>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading"></a></h2>
+<p>Scale preshuffling on NVIDIA GPUs</p>
+<p>CUDA devices that support PTX 8.7 and later can utlize block scaled matrix multiply
+instructions. In order for low latency access to these scale factors in the fast
+inner loop over tensor core MMAs, it is important to ensure that the blocked
+scale factors are stored in a contiguous memory layout according to their access
+pattern.</p>
+<p>The block scaled matmul tensor core instructions compute the following product:</p>
+<blockquote>
+<div><p>C = (A * scale_a) &#64; (B * scale_b)</p>
+</div></blockquote>
+<p>where scale_a and scale_b are the blocked scale factors for the A and B matrices.
+Under block scaled matmul, each scale factor is broadcast and multiplied across a
+vector of elements from the A and B matrices, usually along their respective K axes.
+The number of elements of A and B over which each scale factor is broadcast is herein
+refered to as the vector size (VEC_SIZE).</p>
+<p>In a linear row-major layout, the scale factors would take the shape</p>
+<blockquote>
+<div><p>(M, K // VEC_SIZE) and (N, K // VEC_SIZE)   [1]</p>
+</div></blockquote>
+<p>in global memory. However, to avoid non-contiguous memory access, it is beneficial to
+instead store the scale factors in a packed block layout. For the LHS matrix this layout
+is given by</p>
+<blockquote>
+<div><p>(M // 32 // 4, K // VEC_SIZE // 4, 32, 4, 4)   [2].</p>
+</div></blockquote>
+<p>In this way, each tensor core MMA in the fast inner loop over K blocks can achieve contiguous
+access of a block of 128 rows of scale factors along the M axis, for each BLOCK_M x BLOCK_K
+subtile of the matrix A.</p>
+<p>In order to conform with Triton’s language semantics for dot_scaled, the scale factors
+are prepared in the above 5D layout [2], but are then logically transposed and reshaped into
+the 2D layout [1] expected by tl.dot_scaled.</p>
+<dl class="simple">
+<dt>For more detailed information on the scale factor layout, see</dt><dd><ol class="arabic simple">
+<li><p><a class="reference external" href="https://docs.nvidia.com/cuda/parallel-thread-execution/#tcgen05-mma-scale-factor-a-layout-1x">https://docs.nvidia.com/cuda/parallel-thread-execution/#tcgen05-mma-scale-factor-a-layout-1x</a></p></li>
+<li><p><a class="reference external" href="https://docs.nvidia.com/cuda/cublas/#d-block-scaling-factors-layout">https://docs.nvidia.com/cuda/cublas/#d-block-scaling-factors-layout</a></p></li>
+</ol>
+</dd>
+</dl>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Scale preshuffling on AMD GPUs</span>
+<span class="c1">#</span>
+<span class="c1"># Similar to NVIDIA GPUs, on AMD GPUs with CDNA4 architecture, scaled MFMA instructions natively</span>
+<span class="c1"># support scaled matrix multiplication. Since it only supports OCP microscaling formats each</span>
+<span class="c1"># scale is an 8-bit value that scales 32 elements from A or B operand tensors.</span>
+<span class="c1"># Scales are stored as 8-bit tensors. Since MFMA instructions are warp-level instructions, that</span>
+<span class="c1"># means that each thread provides a fixed set of operand values to MFMA instructions.</span>
+<span class="c1">#</span>
+<span class="c1"># For example, in an MFMA instruction with shape 16x16x128:</span>
+<span class="c1"># - 4 threads contribute elements along the K dimension.</span>
+<span class="c1"># - 16 threads contribute elements along the M or N dimension.</span>
+<span class="c1">#</span>
+<span class="c1"># From the perspective of the scales tensor, even if the K dimension is stored contiguously in</span>
+<span class="c1"># shared memory, each thread sees its elements along K dim as strided due to interleaving with</span>
+<span class="c1"># other threads. This striding limits the ability to load scale values using vectorized memory</span>
+<span class="c1"># access.</span>
+<span class="c1">#</span>
+<span class="c1"># Our goal is to reorganize the scale tensor so that:</span>
+<span class="c1"># 1. Each thread stores the 4 scale values it needs for 4 MFMA ops in contiguous memory.</span>
+<span class="c1"># 2. Continuous threads access contiguous memory locations improving global memory coalescing when</span>
+<span class="c1"># bypassing LDS, which is especially beneficial for &quot;skinny&quot; matmuls.</span>
+<span class="c1">#</span>
+<span class="c1"># We consider two MFMA cases: one with non-K dimension 16, and one with 32.</span>
+<span class="c1"># In both, the minimum tile size for preshuffling is 32x32x256.</span>
+<span class="c1"># For example, for a 32x256 operand tile, the corresponding scale tensor has shape 32x8,</span>
+<span class="c1"># where each scale covers 32 elements along the K dimension.</span>
+<span class="c1">#</span>
+<span class="c1"># Each thread holds one scale per MFMA operation. We pack the 4 scale values</span>
+<span class="c1"># (for 4 different MFMA ops) next to each other in memory.</span>
+<span class="c1">#</span>
+<span class="c1"># Case 1: mfma_scaled_16x16x128</span>
+<span class="c1">#</span>
+<span class="c1"># Packing order: mfma_op_0, mfma_op_2, mfma_op_1, mfma_op_3</span>
+<span class="c1">#</span>
+<span class="c1">#            K = 128       K = 128</span>
+<span class="c1">#        +------------+ +------------+</span>
+<span class="c1">#    M=16|  MFMA op 0 | |  MFMA op 1 |</span>
+<span class="c1">#        +------------+ +------------+</span>
+<span class="c1">#    M=16|  MFMA op 2 | |  MFMA op 3 |</span>
+<span class="c1">#        +------------+ +------------+</span>
+<span class="c1">#</span>
+<span class="c1"># Case 2: mfma_scaled_32x32x64</span>
+<span class="c1">#</span>
+<span class="c1"># Packing order: mfma_op_0, mfma_op_1, mfma_op_2, mfma_op_3</span>
+<span class="c1">#</span>
+<span class="c1">#            K=64     K=64     K=64     K=64</span>
+<span class="c1">#        +--------+ +--------+ +--------+ +--------+</span>
+<span class="c1">#    M=32| op 0   | | op 1   | | op 2   | | op 3   |</span>
+<span class="c1">#        +--------+ +--------+ +--------+ +--------+</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">triton</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">triton.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">triton.profiler</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">proton</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triton.tools.tensor_descriptor</span><span class="w"> </span><span class="kn">import</span> <span class="n">TensorDescriptor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triton.tools.mxfp</span><span class="w"> </span><span class="kn">import</span> <span class="n">MXFP4Tensor</span><span class="p">,</span> <span class="n">MXScaleTensor</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_cuda</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">triton</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">active</span><span class="o">.</span><span class="n">get_current_target</span><span class="p">()</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_hip_cdna4</span><span class="p">():</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">triton</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">active</span><span class="o">.</span><span class="n">get_current_target</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">target</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;hip&#39;</span> <span class="ow">and</span> <span class="n">target</span><span class="o">.</span><span class="n">arch</span> <span class="o">==</span> <span class="s1">&#39;gfx950&#39;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">supports_block_scaling</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">is_cuda</span><span class="p">()</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_capability</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span> <span class="ow">or</span> <span class="n">is_hip_cdna4</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="n">is_cuda</span><span class="p">()</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_capability</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">]:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triton._C.libtriton</span><span class="w"> </span><span class="kn">import</span> <span class="n">nvidia</span>
+    <span class="n">cublas_workspace</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">32</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">cublas</span> <span class="o">=</span> <span class="n">nvidia</span><span class="o">.</span><span class="n">cublas</span><span class="o">.</span><span class="n">CublasLt</span><span class="p">(</span><span class="n">cublas_workspace</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">cublas</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_matmul_launch_metadata</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;M&quot;</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;K&quot;</span><span class="p">]</span>
+    <span class="n">kernel_name</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">if</span> <span class="s2">&quot;ELEM_PER_BYTE_A&quot;</span> <span class="ow">and</span> <span class="s2">&quot;ELEM_PER_BYTE_B&quot;</span> <span class="ow">and</span> <span class="s2">&quot;VEC_SIZE&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;ELEM_PER_BYTE_A&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;ELEM_PER_BYTE_B&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">kernel_name</span> <span class="o">+=</span> <span class="s2">&quot;_mxfp8&quot;</span>
+        <span class="k">elif</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;ELEM_PER_BYTE_A&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;ELEM_PER_BYTE_B&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">kernel_name</span> <span class="o">+=</span> <span class="s2">&quot;_mixed&quot;</span>
+        <span class="k">elif</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;ELEM_PER_BYTE_A&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;ELEM_PER_BYTE_B&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;VEC_SIZE&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>
+                <span class="n">kernel_name</span> <span class="o">+=</span> <span class="s2">&quot;_nvfp4&quot;</span>
+            <span class="k">elif</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;VEC_SIZE&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+                <span class="n">kernel_name</span> <span class="o">+=</span> <span class="s2">&quot;_mxfp4&quot;</span>
+    <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kernel_name</span><span class="si">}</span><span class="s2"> [M=</span><span class="si">{</span><span class="n">M</span><span class="si">}</span><span class="s2">, N=</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">, K=</span><span class="si">{</span><span class="n">K</span><span class="si">}</span><span class="s2">]&quot;</span>
+    <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;flops&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">M</span> <span class="o">*</span> <span class="n">N</span> <span class="o">*</span> <span class="n">K</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+
+<span class="nd">@triton</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">launch_metadata</span><span class="o">=</span><span class="n">_matmul_launch_metadata</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">block_scaled_matmul_kernel</span><span class="p">(</span>  <span class="c1">#</span>
+        <span class="n">a_desc</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">a_scale_desc</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">b_desc</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">b_scale_desc</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">c_desc</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">M</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">N</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">K</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">output_type</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">ELEM_PER_BYTE_A</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">ELEM_PER_BYTE_B</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">VEC_SIZE</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">BLOCK_M</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">BLOCK_N</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">BLOCK_K</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">rep_m</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">rep_n</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">rep_k</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+        <span class="n">NUM_STAGES</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>  <span class="c1">#</span>
+<span class="p">):</span>  <span class="c1">#</span>
+    <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">output_dtype</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">float32</span>
+    <span class="k">elif</span> <span class="n">output_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">output_dtype</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">float16</span>
+    <span class="k">elif</span> <span class="n">output_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">output_dtype</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">float8e4nv</span>
+
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">program_id</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">num_pid_m</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">BLOCK_M</span><span class="p">)</span>
+    <span class="n">pid_m</span> <span class="o">=</span> <span class="n">pid</span> <span class="o">%</span> <span class="n">num_pid_m</span>
+    <span class="n">pid_n</span> <span class="o">=</span> <span class="n">pid</span> <span class="o">//</span> <span class="n">num_pid_m</span>
+    <span class="n">offs_am</span> <span class="o">=</span> <span class="n">pid_m</span> <span class="o">*</span> <span class="n">BLOCK_M</span>
+    <span class="n">offs_bn</span> <span class="o">=</span> <span class="n">pid_n</span> <span class="o">*</span> <span class="n">BLOCK_N</span>
+    <span class="n">offs_k_a</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">offs_k_b</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">offs_scale_m</span> <span class="o">=</span> <span class="n">pid_m</span> <span class="o">*</span> <span class="n">rep_m</span>
+    <span class="n">offs_scale_n</span> <span class="o">=</span> <span class="n">pid_n</span> <span class="o">*</span> <span class="n">rep_n</span>
+    <span class="n">offs_scale_k</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">MIXED_PREC</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span> <span class="o">=</span> <span class="n">ELEM_PER_BYTE_A</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">ELEM_PER_BYTE_B</span> <span class="o">==</span> <span class="mi">2</span>
+
+    <span class="n">accumulator</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">BLOCK_M</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tl</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">tl</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tl</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">BLOCK_K</span><span class="p">),</span> <span class="n">num_stages</span><span class="o">=</span><span class="n">NUM_STAGES</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">a_desc</span><span class="o">.</span><span class="n">load</span><span class="p">([</span><span class="n">offs_am</span><span class="p">,</span> <span class="n">offs_k_a</span><span class="p">])</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">b_desc</span><span class="o">.</span><span class="n">load</span><span class="p">([</span><span class="n">offs_bn</span><span class="p">,</span> <span class="n">offs_k_b</span><span class="p">])</span>
+        <span class="n">scale_a</span> <span class="o">=</span> <span class="n">a_scale_desc</span><span class="o">.</span><span class="n">load</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">offs_scale_m</span><span class="p">,</span> <span class="n">offs_scale_k</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">scale_b</span> <span class="o">=</span> <span class="n">b_scale_desc</span><span class="o">.</span><span class="n">load</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">offs_scale_n</span><span class="p">,</span> <span class="n">offs_scale_k</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">scale_a</span> <span class="o">=</span> <span class="n">scale_a</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rep_m</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">trans</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_M</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">VEC_SIZE</span><span class="p">)</span>
+        <span class="n">scale_b</span> <span class="o">=</span> <span class="n">scale_b</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rep_n</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">trans</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_N</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">VEC_SIZE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">MIXED_PREC</span><span class="p">:</span>
+            <span class="n">accumulator</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">dot_scaled</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">scale_a</span><span class="p">,</span> <span class="s2">&quot;e4m3&quot;</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">scale_b</span><span class="p">,</span> <span class="s2">&quot;e2m1&quot;</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ELEM_PER_BYTE_A</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">ELEM_PER_BYTE_B</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">accumulator</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">dot_scaled</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">scale_a</span><span class="p">,</span> <span class="s2">&quot;e2m1&quot;</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">scale_b</span><span class="p">,</span> <span class="s2">&quot;e2m1&quot;</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">accumulator</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">dot_scaled</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">scale_a</span><span class="p">,</span> <span class="s2">&quot;e4m3&quot;</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">scale_b</span><span class="p">,</span> <span class="s2">&quot;e4m3&quot;</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">)</span>
+
+        <span class="n">offs_k_a</span> <span class="o">+=</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">ELEM_PER_BYTE_A</span>
+        <span class="n">offs_k_b</span> <span class="o">+=</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">ELEM_PER_BYTE_B</span>
+        <span class="n">offs_scale_k</span> <span class="o">+=</span> <span class="n">rep_k</span>
+
+    <span class="n">c_desc</span><span class="o">.</span><span class="n">store</span><span class="p">([</span><span class="n">offs_am</span><span class="p">,</span> <span class="n">offs_bn</span><span class="p">],</span> <span class="n">accumulator</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">output_dtype</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">block_scaled_matmul</span><span class="p">(</span><span class="n">a_desc</span><span class="p">,</span> <span class="n">a_scale_desc</span><span class="p">,</span> <span class="n">b_desc</span><span class="p">,</span> <span class="n">b_scale_desc</span><span class="p">,</span> <span class="n">dtype_dst</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">rep_m</span><span class="p">,</span> <span class="n">rep_n</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span> <span class="n">configs</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_dst</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dtype_dst</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
+        <span class="n">dtype_dst</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">dtype_dst</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">:</span>
+        <span class="n">dtype_dst</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">dtype_dst</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">:</span>
+        <span class="n">dtype_dst</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported dtype: </span><span class="si">{</span><span class="n">dtype_dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">BLOCK_M</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;BLOCK_SIZE_M&quot;</span><span class="p">]</span>
+    <span class="n">BLOCK_N</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;BLOCK_SIZE_N&quot;</span><span class="p">]</span>
+    <span class="n">c_desc</span> <span class="o">=</span> <span class="n">TensorDescriptor</span><span class="o">.</span><span class="n">from_tensor</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="p">[</span><span class="n">BLOCK_M</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">])</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="p">(</span><span class="n">triton</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">BLOCK_M</span><span class="p">)</span> <span class="o">*</span> <span class="n">triton</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">block_scaled_matmul_kernel</span><span class="p">[</span><span class="n">grid</span><span class="p">](</span>
+        <span class="n">a_desc</span><span class="p">,</span>
+        <span class="n">a_scale_desc</span><span class="p">,</span>
+        <span class="n">b_desc</span><span class="p">,</span>
+        <span class="n">b_scale_desc</span><span class="p">,</span>
+        <span class="n">c_desc</span><span class="p">,</span>
+        <span class="n">M</span><span class="p">,</span>
+        <span class="n">N</span><span class="p">,</span>
+        <span class="n">K</span><span class="p">,</span>
+        <span class="n">dtype_dst</span><span class="p">,</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;ELEM_PER_BYTE_A&quot;</span><span class="p">],</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;ELEM_PER_BYTE_B&quot;</span><span class="p">],</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;VEC_SIZE&quot;</span><span class="p">],</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;BLOCK_SIZE_M&quot;</span><span class="p">],</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;BLOCK_SIZE_N&quot;</span><span class="p">],</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;BLOCK_SIZE_K&quot;</span><span class="p">],</span>
+        <span class="n">rep_m</span><span class="p">,</span>
+        <span class="n">rep_n</span><span class="p">,</span>
+        <span class="n">rep_k</span><span class="p">,</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;num_stages&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">cublas_block_scaled_matmul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_scale</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b_scale</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="s2">&quot;mxfp8&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    cuBLAS block-scaled matmul baseline.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a: Input matrix A</span>
+<span class="sd">            - For mxfp8: (M, K) in FP8 E4M3</span>
+<span class="sd">            - For nvfp4: (M, K//2) in uint8 packed FP4 (2 elements per byte)</span>
+<span class="sd">        a_scale: Scale factors for A</span>
+<span class="sd">            - For mxfp8: E8M0 scales (flattened)</span>
+<span class="sd">            - For nvfp4: FP8 E4M3 scales in cublas layout (M, K//16)</span>
+<span class="sd">        b: Input matrix B</span>
+<span class="sd">            - For mxfp8: (N, K) in FP8 E4M3</span>
+<span class="sd">            - For nvfp4: (N, K//2) in uint8 packed FP4 (2 elements per byte)</span>
+<span class="sd">        b_scale: Scale factors for B</span>
+<span class="sd">            - For mxfp8: E8M0 scales (flattened)</span>
+<span class="sd">            - For nvfp4: FP8 E4M3 scales in cublas layout (N, K//16)</span>
+<span class="sd">        block_scale_type: Format type (&quot;mxfp8&quot; or &quot;nvfp4&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        output: Result matrix (M, N) in FP16</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">M</span><span class="p">,</span> <span class="n">K_a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">K_b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">block_scale_type</span> <span class="o">==</span> <span class="s2">&quot;mxfp8&quot;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">K_a</span> <span class="o">==</span> <span class="n">K_b</span><span class="p">,</span> <span class="s2">&quot;K dimensions must match&quot;</span>
+        <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">,</span> <span class="s2">&quot;Only FP8 E4M3 inputs supported for mxfp8&quot;</span>
+        <span class="k">assert</span> <span class="n">b</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">,</span> <span class="s2">&quot;Only FP8 E4M3 inputs supported for mxfp8&quot;</span>
+        <span class="c1"># MXFP8 cuBLAS outputs FP16</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+        <span class="n">cublas</span><span class="o">.</span><span class="n">block_scaled_matmul_mxfp8</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">a_scale</span><span class="p">,</span> <span class="n">b_scale</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">block_scale_type</span> <span class="o">==</span> <span class="s2">&quot;nvfp4&quot;</span><span class="p">:</span>
+        <span class="c1"># For packed FP4, K_a and K_b are in bytes (K = K_a * 2 in elements)</span>
+        <span class="k">assert</span> <span class="n">K_a</span> <span class="o">==</span> <span class="n">K_b</span><span class="p">,</span> <span class="s2">&quot;K dimensions must match&quot;</span>
+        <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="s2">&quot;Only uint8 packed FP4 inputs supported for nvfp4&quot;</span>
+        <span class="k">assert</span> <span class="n">b</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="s2">&quot;Only uint8 packed FP4 inputs supported for nvfp4&quot;</span>
+        <span class="c1"># NVFP4 cuBLAS outputs FP16</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+        <span class="n">cublas</span><span class="o">.</span><span class="n">block_scaled_matmul_nvfp4</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">a_scale</span><span class="p">,</span> <span class="n">b_scale</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported block_scale_type: </span><span class="si">{</span><span class="n">block_scale_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">initialize_block_scaled</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="s2">&quot;nvfp4&quot;</span><span class="p">,</span> <span class="n">compute_reference</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">BLOCK_M</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">BLOCK_N</span> <span class="o">=</span> <span class="mi">256</span>
+    <span class="n">BLOCK_K</span> <span class="o">=</span> <span class="mi">256</span> <span class="k">if</span> <span class="s2">&quot;fp4&quot;</span> <span class="ow">in</span> <span class="n">block_scale_type</span> <span class="k">else</span> <span class="mi">128</span>
+    <span class="n">VEC_SIZE</span> <span class="o">=</span> <span class="mi">16</span> <span class="k">if</span> <span class="n">block_scale_type</span> <span class="o">==</span> <span class="s2">&quot;nvfp4&quot;</span> <span class="k">else</span> <span class="mi">32</span>
+    <span class="k">assert</span> <span class="n">block_scale_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;nvfp4&quot;</span><span class="p">,</span> <span class="s2">&quot;mxfp4&quot;</span><span class="p">,</span> <span class="s2">&quot;mxfp8&quot;</span><span class="p">,</span> <span class="s2">&quot;mixed&quot;</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;Invalid block scale type: </span><span class="si">{</span><span class="n">block_scale_type</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">ELEM_PER_BYTE_A</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="s2">&quot;fp4&quot;</span> <span class="ow">in</span> <span class="n">block_scale_type</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">ELEM_PER_BYTE_B</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">block_scale_type</span> <span class="o">==</span> <span class="s2">&quot;mxfp8&quot;</span> <span class="k">else</span> <span class="mi">2</span>
+
+    <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>
+    <span class="n">a_ref</span> <span class="o">=</span> <span class="n">MXFP4Tensor</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+    <span class="c1"># Similar to Hopper&#39;s wgmma symmetric fp8 instruction, the RHS is expected</span>
+    <span class="c1"># to be in col-major layout for Blackwell&#39;s tcgen05.mma when using fp4 operands.</span>
+    <span class="c1"># To conform to the expected semantics of tl.dot_scaled, (M, K) x (K, N),</span>
+    <span class="c1"># the data is generated in col-major layout, packed along K for fp4, and then</span>
+    <span class="c1"># logically transposed. Note that if one operand is of fp8 precision, unlike Hopper,</span>
+    <span class="c1"># Blackwell supports both row-major and col-major layouts for the RHS matrix.</span>
+    <span class="c1"># For the mixed-precision case, the fp4 RHS can be either in row or col-major layout.</span>
+    <span class="c1"># But for performance reason, it is recommended to use col-major layout. If TMA is used</span>
+    <span class="c1"># for the fp4 RHS operand load in mixed-precision dot, as in this tutorial, it must be</span>
+    <span class="c1"># in col-major layout.</span>
+    <span class="n">b_ref</span> <span class="o">=</span> <span class="n">MXFP4Tensor</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">block_scale_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mxfp8&quot;</span><span class="p">,</span> <span class="s2">&quot;mixed&quot;</span><span class="p">]:</span>
+        <span class="n">a_ref</span> <span class="o">=</span> <span class="n">a_ref</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">a_ref</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Pack two fp4 elements per byte along K</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">a_ref</span><span class="o">.</span><span class="n">to_packed_tensor</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">block_scale_type</span> <span class="o">==</span> <span class="s2">&quot;mxfp8&quot;</span><span class="p">:</span>
+        <span class="n">b_ref</span> <span class="o">=</span> <span class="n">b_ref</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">b_ref</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">b_ref</span><span class="o">.</span><span class="n">to_packed_tensor</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">b_ref</span> <span class="o">=</span> <span class="n">b_ref</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">a_desc</span> <span class="o">=</span> <span class="n">TensorDescriptor</span><span class="o">.</span><span class="n">from_tensor</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="n">BLOCK_M</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">ELEM_PER_BYTE_A</span><span class="p">])</span>
+    <span class="n">b_desc</span> <span class="o">=</span> <span class="n">TensorDescriptor</span><span class="o">.</span><span class="n">from_tensor</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">[</span><span class="n">BLOCK_N</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">ELEM_PER_BYTE_B</span><span class="p">])</span>
+
+    <span class="n">a_scale_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">M</span> <span class="o">//</span> <span class="mi">128</span><span class="p">,</span> <span class="n">K</span> <span class="o">//</span> <span class="n">VEC_SIZE</span> <span class="o">//</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>
+    <span class="n">b_scale_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">N</span> <span class="o">//</span> <span class="mi">128</span><span class="p">,</span> <span class="n">K</span> <span class="o">//</span> <span class="n">VEC_SIZE</span> <span class="o">//</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="n">a_scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">a_scale_shape</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">+</span> <span class="n">epsilon</span>
+    <span class="n">b_scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">b_scale_shape</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">+</span> <span class="n">epsilon</span>
+
+    <span class="c1"># Store original scales for cublas nvfp4 before any layout conversion.</span>
+    <span class="c1"># For cublas nvfp4, the scales are in the original 4D layout.</span>
+    <span class="n">a_scale_orig</span> <span class="o">=</span> <span class="n">a_scale</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">b_scale_orig</span> <span class="o">=</span> <span class="n">b_scale</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">block_scale_type</span> <span class="o">==</span> <span class="s2">&quot;nvfp4&quot;</span><span class="p">:</span>
+        <span class="n">a_scale</span> <span class="o">=</span> <span class="n">a_scale</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">)</span>
+        <span class="n">b_scale</span> <span class="o">=</span> <span class="n">b_scale</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">)</span>
+        <span class="n">a_scale_ref</span> <span class="o">=</span> <span class="n">a_scale</span>
+        <span class="n">b_scale_ref</span> <span class="o">=</span> <span class="n">b_scale</span>
+    <span class="k">elif</span> <span class="n">block_scale_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mxfp4&quot;</span><span class="p">,</span> <span class="s2">&quot;mxfp8&quot;</span><span class="p">,</span> <span class="s2">&quot;mixed&quot;</span><span class="p">]:</span>
+        <span class="n">a_scale_ref</span> <span class="o">=</span> <span class="n">MXScaleTensor</span><span class="p">(</span><span class="n">a_scale</span><span class="p">)</span>
+        <span class="n">b_scale_ref</span> <span class="o">=</span> <span class="n">MXScaleTensor</span><span class="p">(</span><span class="n">b_scale</span><span class="p">)</span>
+        <span class="n">a_scale</span> <span class="o">=</span> <span class="n">a_scale_ref</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">b_scale</span> <span class="o">=</span> <span class="n">b_scale_ref</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="n">rep_m</span> <span class="o">=</span> <span class="n">BLOCK_M</span> <span class="o">//</span> <span class="mi">128</span>
+    <span class="n">rep_n</span> <span class="o">=</span> <span class="n">BLOCK_N</span> <span class="o">//</span> <span class="mi">128</span>
+    <span class="n">rep_k</span> <span class="o">=</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">VEC_SIZE</span> <span class="o">//</span> <span class="mi">4</span>
+
+    <span class="c1"># Use 5D TMA descriptor [1, rep_m, rep_k, 2, 256] with uint8 elements.</span>
+    <span class="c1"># With 256 elements we better utilize the L2 and don&#39;t require the TMA</span>
+    <span class="c1"># engine to emit many small messages (16B) messages as with 32x16xu8.</span>
+    <span class="n">a_scale_block_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">rep_m</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
+    <span class="n">b_scale_block_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">rep_n</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
+    <span class="n">a_scale</span> <span class="o">=</span> <span class="n">a_scale</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">a_scale_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a_scale</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+    <span class="n">b_scale</span> <span class="o">=</span> <span class="n">b_scale</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">b_scale_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">b_scale</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+    <span class="n">a_scale_desc</span> <span class="o">=</span> <span class="n">TensorDescriptor</span><span class="o">.</span><span class="n">from_tensor</span><span class="p">(</span><span class="n">a_scale</span><span class="p">,</span> <span class="n">block_shape</span><span class="o">=</span><span class="n">a_scale_block_shape</span><span class="p">)</span>
+    <span class="n">b_scale_desc</span> <span class="o">=</span> <span class="n">TensorDescriptor</span><span class="o">.</span><span class="n">from_tensor</span><span class="p">(</span><span class="n">b_scale</span><span class="p">,</span> <span class="n">block_shape</span><span class="o">=</span><span class="n">b_scale_block_shape</span><span class="p">)</span>
+
+    <span class="n">reference</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">compute_reference</span><span class="p">:</span>
+        <span class="n">a_scale_ref</span> <span class="o">=</span> <span class="n">a_scale_ref</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">b_scale_ref</span> <span class="o">=</span> <span class="n">b_scale_ref</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">unpack_scale</span><span class="p">(</span><span class="n">packed</span><span class="p">):</span>
+            <span class="n">packed</span> <span class="o">=</span> <span class="n">packed</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">packed</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">num_chunk_m</span><span class="p">,</span> <span class="n">num_chunk_k</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">packed</span><span class="o">.</span><span class="n">shape</span>
+            <span class="k">return</span> <span class="n">packed</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_chunk_m</span> <span class="o">*</span> <span class="mi">128</span><span class="p">,</span> <span class="n">num_chunk_k</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+
+        <span class="n">a_scale_ref</span> <span class="o">=</span> <span class="n">unpack_scale</span><span class="p">(</span><span class="n">a_scale_ref</span><span class="p">)</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="n">VEC_SIZE</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:</span><span class="n">M</span><span class="p">,</span> <span class="p">:</span><span class="n">K</span><span class="p">]</span>
+        <span class="n">b_scale_ref</span> <span class="o">=</span> <span class="n">unpack_scale</span><span class="p">(</span><span class="n">b_scale_ref</span><span class="p">)</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="n">VEC_SIZE</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()[:</span><span class="n">K</span><span class="p">,</span> <span class="p">:</span><span class="n">N</span><span class="p">]</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">a_ref</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="n">a_scale_ref</span><span class="p">,</span> <span class="n">b_ref</span> <span class="o">*</span> <span class="n">b_scale_ref</span><span class="p">)</span>
+
+    <span class="n">configs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;BLOCK_SIZE_M&quot;</span><span class="p">:</span> <span class="n">BLOCK_M</span><span class="p">,</span>
+        <span class="s2">&quot;BLOCK_SIZE_N&quot;</span><span class="p">:</span> <span class="n">BLOCK_N</span><span class="p">,</span>
+        <span class="s2">&quot;BLOCK_SIZE_K&quot;</span><span class="p">:</span> <span class="n">BLOCK_K</span><span class="p">,</span>
+        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;ELEM_PER_BYTE_A&quot;</span><span class="p">:</span> <span class="n">ELEM_PER_BYTE_A</span><span class="p">,</span>
+        <span class="s2">&quot;ELEM_PER_BYTE_B&quot;</span><span class="p">:</span> <span class="n">ELEM_PER_BYTE_B</span><span class="p">,</span>
+        <span class="s2">&quot;VEC_SIZE&quot;</span><span class="p">:</span> <span class="n">VEC_SIZE</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Flatten scales for cuBLAS</span>
+    <span class="k">if</span> <span class="n">block_scale_type</span> <span class="o">==</span> <span class="s2">&quot;mxfp8&quot;</span><span class="p">:</span>
+        <span class="n">a_scale_cublas</span> <span class="o">=</span> <span class="n">a_scale</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">b_scale_cublas</span> <span class="o">=</span> <span class="n">b_scale</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">block_scale_type</span> <span class="o">==</span> <span class="s2">&quot;nvfp4&quot;</span><span class="p">:</span>
+        <span class="n">a_scale_orig</span> <span class="o">=</span> <span class="n">a_scale_orig</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">)</span>
+        <span class="n">b_scale_orig</span> <span class="o">=</span> <span class="n">b_scale_orig</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">)</span>
+        <span class="n">a_scale_cublas</span> <span class="o">=</span> <span class="n">a_scale_orig</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">b_scale_cublas</span> <span class="o">=</span> <span class="n">b_scale_orig</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a_scale_cublas</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">b_scale_cublas</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">a_desc</span><span class="p">,</span> <span class="n">a_scale_desc</span><span class="p">,</span> <span class="n">b_desc</span><span class="p">,</span> <span class="n">b_scale_desc</span><span class="p">,</span> <span class="n">rep_m</span><span class="p">,</span> <span class="n">rep_n</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a_scale_cublas</span><span class="p">,</span> <span class="n">b_scale_cublas</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_block_scaled</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="s2">&quot;nvfp4&quot;</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">initialize_block_scaled</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="p">,</span> <span class="n">compute_reference</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">a_desc</span><span class="p">,</span> <span class="n">a_scale_desc</span><span class="p">,</span> <span class="n">b_desc</span><span class="p">,</span> <span class="n">b_scale_desc</span><span class="p">,</span> <span class="n">rep_m</span><span class="p">,</span> <span class="n">rep_n</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">reference</span> <span class="o">=</span> <span class="n">results</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a_scale_cublas</span><span class="p">,</span> <span class="n">b_scale_cublas</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span>
+
+    <span class="c1"># Test Triton implementation</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">block_scaled_matmul</span><span class="p">(</span><span class="n">a_desc</span><span class="p">,</span> <span class="n">a_scale_desc</span><span class="p">,</span> <span class="n">b_desc</span><span class="p">,</span> <span class="n">b_scale_desc</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">rep_m</span><span class="p">,</span> <span class="n">rep_n</span><span class="p">,</span>
+                                 <span class="n">rep_k</span><span class="p">,</span> <span class="n">configs</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+
+    <span class="c1"># Test cuBLAS implementation if available (available for mxfp8 and nvfp4 only as of 13.1)</span>
+    <span class="k">if</span> <span class="n">cublas</span> <span class="ow">and</span> <span class="n">block_scale_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mxfp8&quot;</span><span class="p">,</span> <span class="s2">&quot;nvfp4&quot;</span><span class="p">]:</span>
+        <span class="n">cublas_output</span> <span class="o">=</span> <span class="n">cublas_block_scaled_matmul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_scale_cublas</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b_scale_cublas</span><span class="p">,</span>
+                                                   <span class="n">block_scale_type</span><span class="o">=</span><span class="n">block_scale_type</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">cublas_output</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ (pass </span><span class="si">{</span><span class="n">block_scale_type</span><span class="si">}</span><span class="s2"> - Triton and cuBLAS)&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ (pass </span><span class="si">{</span><span class="n">block_scale_type</span><span class="si">}</span><span class="s2"> - Triton only)&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">bench_block_scaled</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="s2">&quot;nvfp4&quot;</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">warmup_reps</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">K</span> <span class="o">%</span> <span class="mi">128</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="mi">8192</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">8192</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem Shape = </span><span class="si">{</span><span class="n">M</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">K</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">initialize_block_scaled</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="p">,</span> <span class="n">compute_reference</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">a_desc</span><span class="p">,</span> <span class="n">a_scale_desc</span><span class="p">,</span> <span class="n">b_desc</span><span class="p">,</span> <span class="n">b_scale_desc</span><span class="p">,</span> <span class="n">rep_m</span><span class="p">,</span> <span class="n">rep_n</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">results</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a_scale_cublas</span><span class="p">,</span> <span class="n">b_scale_cublas</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span>
+
+    <span class="c1"># Warmup</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">warmup_reps</span><span class="p">):</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">block_scaled_matmul</span><span class="p">(</span><span class="n">a_desc</span><span class="p">,</span> <span class="n">a_scale_desc</span><span class="p">,</span> <span class="n">b_desc</span><span class="p">,</span> <span class="n">b_scale_desc</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">rep_m</span><span class="p">,</span> <span class="n">rep_n</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span>
+                                <span class="n">configs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cublas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">supports_block_scaling</span><span class="p">()</span> <span class="ow">and</span> <span class="n">block_scale_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mxfp8&quot;</span><span class="p">,</span> <span class="s2">&quot;nvfp4&quot;</span><span class="p">]:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">cublas_block_scaled_matmul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_scale_cublas</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b_scale_cublas</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="n">block_scale_type</span><span class="p">)</span>
+
+    <span class="c1"># Benchmark</span>
+    <span class="n">proton</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">block_scaled_matmul</span><span class="p">(</span><span class="n">a_desc</span><span class="p">,</span> <span class="n">a_scale_desc</span><span class="p">,</span> <span class="n">b_desc</span><span class="p">,</span> <span class="n">b_scale_desc</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">rep_m</span><span class="p">,</span> <span class="n">rep_n</span><span class="p">,</span> <span class="n">rep_k</span><span class="p">,</span>
+                                <span class="n">configs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cublas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">supports_block_scaling</span><span class="p">()</span> <span class="ow">and</span> <span class="n">block_scale_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mxfp8&quot;</span><span class="p">,</span> <span class="s2">&quot;nvfp4&quot;</span><span class="p">]:</span>
+            <span class="n">bytes_per_elem</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">element_size</span><span class="p">()</span>
+            <span class="c1"># For nvfp4, K is in elements but a.shape[1] is in bytes, so use K/2 for byte calculation</span>
+            <span class="n">K_bytes</span> <span class="o">=</span> <span class="n">K</span> <span class="k">if</span> <span class="n">block_scale_type</span> <span class="o">==</span> <span class="s2">&quot;mxfp8&quot;</span> <span class="k">else</span> <span class="n">K</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="k">with</span> <span class="n">proton</span><span class="o">.</span><span class="n">scope</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cublas [M=</span><span class="si">{</span><span class="n">M</span><span class="si">}</span><span class="s2">, N=</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">, K=</span><span class="si">{</span><span class="n">K</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+                              <span class="p">{</span><span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="n">bytes_per_elem</span> <span class="o">*</span> <span class="p">(</span><span class="n">M</span> <span class="o">*</span> <span class="n">K_bytes</span> <span class="o">+</span> <span class="n">N</span> <span class="o">*</span> <span class="n">K_bytes</span> <span class="o">+</span> <span class="n">M</span> <span class="o">*</span> <span class="n">N</span><span class="p">),</span> <span class="s2">&quot;flops&quot;</span><span class="p">:</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">M</span> <span class="o">*</span> <span class="n">N</span> <span class="o">*</span> <span class="n">K</span><span class="p">}):</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">cublas_block_scaled_matmul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_scale_cublas</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b_scale_cublas</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="n">block_scale_type</span><span class="p">)</span>
+    <span class="n">proton</span><span class="o">.</span><span class="n">deactivate</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done benchmarking&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">show_profile</span><span class="p">(</span><span class="n">profile_name</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">triton.profiler.viewer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">proton_viewer</span>
+
+    <span class="n">metric_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;time/ms&quot;</span><span class="p">]</span>
+    <span class="n">metric_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tflop/s&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">metric_names</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">profile_name</span><span class="si">}</span><span class="s2">.hatchet&quot;</span>
+    <span class="n">tree</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">proton_viewer</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">metric_names</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+    <span class="n">proton_viewer</span><span class="o">.</span><span class="n">print_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+
+
+<span class="nd">@triton</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">block_scaled_matmul_kernel_cdna4</span><span class="p">(</span><span class="n">a_ptr</span><span class="p">,</span> <span class="n">b_ptr</span><span class="p">,</span> <span class="n">c_ptr</span><span class="p">,</span> <span class="n">a_scales_ptr</span><span class="p">,</span> <span class="n">b_scales_ptr</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">stride_am</span><span class="p">,</span> <span class="n">stride_ak</span><span class="p">,</span>
+                                     <span class="n">stride_bk</span><span class="p">,</span> <span class="n">stride_bn</span><span class="p">,</span> <span class="n">stride_ck</span><span class="p">,</span> <span class="n">stride_cm</span><span class="p">,</span> <span class="n">stride_cn</span><span class="p">,</span> <span class="n">stride_asm</span><span class="p">,</span> <span class="n">stride_ask</span><span class="p">,</span>
+                                     <span class="n">stride_bsn</span><span class="p">,</span> <span class="n">stride_bsk</span><span class="p">,</span>
+                                     <span class="c1"># Meta-parameters</span>
+                                     <span class="n">BLOCK_M</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span> <span class="n">BLOCK_K</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">,</span>
+                                     <span class="n">mfma_nonkdim</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kernel for computing the matmul C = A x B.</span>
+<span class="sd">    A and B inputs are in the microscale fp4 (mxfp4) format.</span>
+<span class="sd">    A_scales and B_scales are in e8m0 format.</span>
+<span class="sd">    A has shape (M, K), B has shape (K, N) and C has shape (M, N)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">program_id</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">num_pid_n</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">)</span>
+    <span class="n">pid_m</span> <span class="o">=</span> <span class="n">pid</span> <span class="o">//</span> <span class="n">num_pid_n</span>
+    <span class="n">pid_n</span> <span class="o">=</span> <span class="n">pid</span> <span class="o">%</span> <span class="n">num_pid_n</span>
+
+    <span class="c1"># We assume 32 elements along K share the same scale.</span>
+    <span class="n">SCALE_GROUP_SIZE</span><span class="p">:</span> <span class="n">tl</span><span class="o">.</span><span class="n">constexpr</span> <span class="o">=</span> <span class="mi">32</span>
+    <span class="n">num_k_iter</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Create pointers for first block of A and B input matrices</span>
+    <span class="c1"># The BLOCK sizes are of the elements and in fp4 we pack 2 per uint8 container.</span>
+    <span class="n">offs_k</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">offs_k_split</span> <span class="o">=</span> <span class="n">offs_k</span>
+    <span class="n">offs_am</span> <span class="o">=</span> <span class="p">(</span><span class="n">pid_m</span> <span class="o">*</span> <span class="n">BLOCK_M</span> <span class="o">+</span> <span class="n">tl</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">BLOCK_M</span><span class="p">))</span> <span class="o">%</span> <span class="n">M</span>
+    <span class="n">offs_bn</span> <span class="o">=</span> <span class="p">(</span><span class="n">pid_n</span> <span class="o">*</span> <span class="n">BLOCK_N</span> <span class="o">+</span> <span class="n">tl</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">))</span> <span class="o">%</span> <span class="n">N</span>
+    <span class="n">a_ptrs</span> <span class="o">=</span> <span class="n">a_ptr</span> <span class="o">+</span> <span class="p">(</span><span class="n">offs_am</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">stride_am</span> <span class="o">+</span> <span class="n">offs_k_split</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">stride_ak</span><span class="p">)</span>
+    <span class="n">b_ptrs</span> <span class="o">=</span> <span class="n">b_ptr</span> <span class="o">+</span> <span class="p">(</span><span class="n">offs_k_split</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">stride_bk</span> <span class="o">+</span> <span class="n">offs_bn</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">stride_bn</span><span class="p">)</span>
+
+    <span class="c1"># Create pointers for the first block of A and B scales</span>
+    <span class="n">offs_asn</span> <span class="o">=</span> <span class="p">(</span><span class="n">pid_n</span> <span class="o">*</span> <span class="p">(</span><span class="n">BLOCK_N</span> <span class="o">//</span> <span class="mi">32</span><span class="p">)</span> <span class="o">+</span> <span class="n">tl</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">BLOCK_N</span> <span class="o">//</span> <span class="mi">32</span><span class="p">)))</span> <span class="o">%</span> <span class="n">N</span>
+    <span class="n">offs_ks</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">SCALE_GROUP_SIZE</span> <span class="o">*</span> <span class="mi">32</span><span class="p">)</span>
+
+    <span class="c1"># B scales are N x K even though B operand is K x N.</span>
+    <span class="n">b_scale_ptrs</span> <span class="o">=</span> <span class="p">(</span><span class="n">b_scales_ptr</span> <span class="o">+</span> <span class="n">offs_asn</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">stride_bsn</span> <span class="o">+</span> <span class="n">offs_ks</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">stride_bsk</span><span class="p">)</span>
+    <span class="n">offs_asm</span> <span class="o">=</span> <span class="p">(</span><span class="n">pid_m</span> <span class="o">*</span> <span class="p">(</span><span class="n">BLOCK_M</span> <span class="o">//</span> <span class="mi">32</span><span class="p">)</span> <span class="o">+</span> <span class="n">tl</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">BLOCK_M</span> <span class="o">//</span> <span class="mi">32</span><span class="p">)))</span> <span class="o">%</span> <span class="n">M</span>
+    <span class="n">a_scale_ptrs</span> <span class="o">=</span> <span class="p">(</span><span class="n">a_scales_ptr</span> <span class="o">+</span> <span class="n">offs_asm</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">stride_asm</span> <span class="o">+</span> <span class="n">offs_ks</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">stride_ask</span><span class="p">)</span>
+    <span class="n">accumulator</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">BLOCK_M</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tl</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_k_iter</span><span class="p">):</span>
+        <span class="c1"># Here we &quot;undo&quot; the shuffle done in global memory (shuffle_scales_cdna4 function).</span>
+        <span class="k">if</span> <span class="n">mfma_nonkdim</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+            <span class="n">a_scales</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">a_scale_ptrs</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_M</span> <span class="o">//</span> <span class="mi">32</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">SCALE_GROUP_SIZE</span> <span class="o">//</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span>
+                                                     <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>
+                                                                <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_M</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">SCALE_GROUP_SIZE</span><span class="p">)</span>
+            <span class="n">b_scales</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">b_scale_ptrs</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_N</span> <span class="o">//</span> <span class="mi">32</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">SCALE_GROUP_SIZE</span> <span class="o">//</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span>
+                                                     <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>
+                                                                <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_N</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">SCALE_GROUP_SIZE</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mfma_nonkdim</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>
+            <span class="n">a_scales</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">a_scale_ptrs</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_M</span> <span class="o">//</span> <span class="mi">32</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">SCALE_GROUP_SIZE</span> <span class="o">//</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>
+                                                     <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>
+                                                                <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_M</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">SCALE_GROUP_SIZE</span><span class="p">)</span>
+            <span class="n">b_scales</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">b_scale_ptrs</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_N</span> <span class="o">//</span> <span class="mi">32</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">SCALE_GROUP_SIZE</span> <span class="o">//</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>
+                                                     <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>
+                                                                <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">BLOCK_N</span><span class="p">,</span> <span class="n">BLOCK_K</span> <span class="o">//</span> <span class="n">SCALE_GROUP_SIZE</span><span class="p">)</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">a_ptrs</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">b_ptrs</span><span class="p">,</span> <span class="n">cache_modifier</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">accumulator</span> <span class="o">+=</span> <span class="n">tl</span><span class="o">.</span><span class="n">dot_scaled</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_scales</span><span class="p">,</span> <span class="s2">&quot;e2m1&quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b_scales</span><span class="p">,</span> <span class="s2">&quot;e2m1&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Advance the ptrs to the next K block.</span>
+        <span class="n">a_ptrs</span> <span class="o">+=</span> <span class="p">(</span><span class="n">BLOCK_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">stride_ak</span>
+        <span class="n">b_ptrs</span> <span class="o">+=</span> <span class="p">(</span><span class="n">BLOCK_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">stride_bk</span>
+
+        <span class="n">a_scale_ptrs</span> <span class="o">+=</span> <span class="n">BLOCK_K</span> <span class="o">*</span> <span class="n">stride_ask</span>
+        <span class="n">b_scale_ptrs</span> <span class="o">+=</span> <span class="n">BLOCK_K</span> <span class="o">*</span> <span class="n">stride_bsk</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="n">accumulator</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">c_ptr</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">element_ty</span><span class="p">)</span>
+
+    <span class="c1"># Write back the block of the output matrix C with masks.</span>
+    <span class="n">offs_cm</span> <span class="o">=</span> <span class="n">pid_m</span> <span class="o">*</span> <span class="n">BLOCK_M</span> <span class="o">+</span> <span class="n">tl</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">BLOCK_M</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">tl</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">offs_cn</span> <span class="o">=</span> <span class="n">pid_n</span> <span class="o">*</span> <span class="n">BLOCK_N</span> <span class="o">+</span> <span class="n">tl</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">tl</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">c_ptrs</span> <span class="o">=</span> <span class="p">(</span><span class="n">c_ptr</span> <span class="o">+</span> <span class="n">stride_cm</span> <span class="o">*</span> <span class="n">offs_cm</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">stride_cn</span> <span class="o">*</span> <span class="n">offs_cn</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">c_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">offs_cm</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">offs_cn</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>
+
+    <span class="n">tl</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">c_ptrs</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">c_mask</span><span class="p">,</span> <span class="n">cache_modifier</span><span class="o">=</span><span class="s2">&quot;.wt&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">shuffle_scales_cdna4</span><span class="p">(</span><span class="n">scales</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">scales_shuffled</span> <span class="o">=</span> <span class="n">scales</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">sm</span><span class="p">,</span> <span class="n">sn</span> <span class="o">=</span> <span class="n">scales_shuffled</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">mfma_nonkdim</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+        <span class="n">scales_shuffled</span> <span class="o">=</span> <span class="n">scales_shuffled</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">sm</span> <span class="o">//</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">sn</span> <span class="o">//</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">scales_shuffled</span> <span class="o">=</span> <span class="n">scales_shuffled</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">mfma_nonkdim</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>
+        <span class="n">scales_shuffled</span> <span class="o">=</span> <span class="n">scales_shuffled</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">sm</span> <span class="o">//</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">sn</span> <span class="o">//</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">scales_shuffled</span> <span class="o">=</span> <span class="n">scales_shuffled</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+
+    <span class="n">scales_shuffled</span> <span class="o">=</span> <span class="n">scales_shuffled</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">sm</span> <span class="o">//</span> <span class="mi">32</span><span class="p">,</span> <span class="n">sn</span> <span class="o">*</span> <span class="mi">32</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scales_shuffled</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">initialize_block_scaled_amd</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="p">):</span>
+
+    <span class="n">BLOCK_M</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">BLOCK_N</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">BLOCK_K</span> <span class="o">=</span> <span class="mi">256</span>
+    <span class="n">configs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;BLOCK_M&quot;</span><span class="p">:</span> <span class="n">BLOCK_M</span><span class="p">,</span>
+        <span class="s2">&quot;BLOCK_N&quot;</span><span class="p">:</span> <span class="n">BLOCK_N</span><span class="p">,</span>
+        <span class="s2">&quot;BLOCK_K&quot;</span><span class="p">:</span> <span class="n">BLOCK_K</span><span class="p">,</span>
+        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;num_warps&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s2">&quot;mfma_nonkdim&quot;</span><span class="p">:</span> <span class="n">mfma_nonkdim</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">MXFP4Tensor</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">MXFP4Tensor</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+
+    <span class="n">x_scales</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">124</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="p">(</span><span class="n">K</span> <span class="o">//</span> <span class="mi">32</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+    <span class="n">w_scales</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">124</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="p">(</span><span class="n">K</span> <span class="o">//</span> <span class="mi">32</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+    <span class="n">x_scales</span> <span class="o">=</span> <span class="n">x_scales</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">w_scales</span> <span class="o">=</span> <span class="n">w_scales</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">x_scales_shuffled</span> <span class="o">=</span> <span class="n">shuffle_scales_cdna4</span><span class="p">(</span><span class="n">x_scales</span><span class="p">,</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;mfma_nonkdim&quot;</span><span class="p">])</span>
+    <span class="n">w_scales_shuffled</span> <span class="o">=</span> <span class="n">shuffle_scales_cdna4</span><span class="p">(</span><span class="n">w_scales</span><span class="p">,</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;mfma_nonkdim&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">w</span><span class="p">,</span>
+        <span class="n">x_scales</span><span class="p">,</span>
+        <span class="n">w_scales</span><span class="p">,</span>
+        <span class="n">x_scales_shuffled</span><span class="p">,</span>
+        <span class="n">w_scales_shuffled</span><span class="p">,</span>
+        <span class="n">configs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_block_scaled_amd</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="s2">&quot;mxfp4&quot;</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">e8m0_to_f32</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x_f32</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="mi">127</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+        <span class="n">x_f32</span><span class="p">[</span><span class="n">x_f32</span> <span class="o">==</span> <span class="mi">128</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x_f32</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_torch</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x_scales</span><span class="p">,</span> <span class="n">w_scales</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+        <span class="c1"># First convert the x and w inputs to f32.</span>
+        <span class="n">x_f32</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">w_f32</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="c1"># Next convert the e8m0 scales to f32.</span>
+        <span class="n">x_scales</span> <span class="o">=</span> <span class="n">x_scales</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">x_scales_f32</span> <span class="o">=</span> <span class="n">e8m0_to_f32</span><span class="p">(</span><span class="n">x_scales</span><span class="p">)</span>
+        <span class="n">x_f32</span> <span class="o">=</span> <span class="n">x_f32</span> <span class="o">*</span> <span class="n">x_scales_f32</span>
+        <span class="n">w_scales</span> <span class="o">=</span> <span class="n">w_scales</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">w_scales_f32</span> <span class="o">=</span> <span class="n">e8m0_to_f32</span><span class="p">(</span><span class="n">w_scales</span><span class="p">)</span>
+        <span class="n">w_f32</span> <span class="o">=</span> <span class="n">w_f32</span> <span class="o">*</span> <span class="n">w_scales_f32</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x_f32</span><span class="p">,</span> <span class="n">w_f32</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="n">x_mxfp4</span><span class="p">,</span> <span class="n">w_mxfp4</span><span class="p">,</span> <span class="n">x_scales</span><span class="p">,</span> <span class="n">w_scales</span><span class="p">,</span> <span class="n">x_scales_triton</span><span class="p">,</span> <span class="n">w_scales_triton</span><span class="p">,</span> <span class="n">configs</span> <span class="o">=</span> \
+    <span class="n">initialize_block_scaled_amd</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x_mxfp4</span><span class="o">.</span><span class="n">to_packed_tensor</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w_mxfp4</span><span class="o">.</span><span class="n">to_packed_tensor</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">triton_out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">triton_out</span> <span class="o">=</span> <span class="n">block_scaled_matmul_amd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x_scales_triton</span><span class="p">,</span> <span class="n">w_scales_triton</span><span class="p">,</span> <span class="n">configs</span><span class="p">)</span>
+    <span class="n">triton_out</span> <span class="o">=</span> <span class="n">triton_out</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="n">torch_out</span> <span class="o">=</span> <span class="n">run_torch</span><span class="p">(</span><span class="n">x_mxfp4</span><span class="p">,</span> <span class="n">w_mxfp4</span><span class="p">,</span> <span class="n">x_scales</span><span class="p">,</span> <span class="n">w_scales</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">torch_out</span><span class="p">,</span> <span class="n">triton_out</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ (pass </span><span class="si">{</span><span class="n">block_scale_type</span><span class="si">}</span><span class="s2">, mfma_nonk_dim </span><span class="si">{</span><span class="n">mfma_nonkdim</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">block_scaled_matmul_amd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x_scales_triton</span><span class="p">,</span> <span class="n">w_scales_triton</span><span class="p">,</span> <span class="n">configs</span><span class="p">):</span>
+    <span class="n">M</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">triton_out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="n">kernel_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">kernel_kwargs</span><span class="p">[</span><span class="s2">&quot;matrix_instr_nonkdim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;mfma_nonkdim&quot;</span><span class="p">]</span>
+
+    <span class="n">BLOCK_M</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;BLOCK_M&quot;</span><span class="p">]</span>
+    <span class="n">BLOCK_N</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;BLOCK_N&quot;</span><span class="p">]</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="p">(</span><span class="n">triton</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">BLOCK_M</span><span class="p">)</span> <span class="o">*</span> <span class="n">triton</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">triton_out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="p">(</span><span class="n">triton</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">BLOCK_M</span><span class="p">)</span> <span class="o">*</span> <span class="n">triton</span><span class="o">.</span><span class="n">cdiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">block_scaled_matmul_kernel_cdna4</span><span class="p">[</span><span class="n">grid</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">triton_out</span><span class="p">,</span> <span class="n">x_scales_triton</span><span class="p">,</span> <span class="n">w_scales_triton</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                                           <span class="n">x</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">w</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">w</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">triton_out</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                                           <span class="n">triton_out</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x_scales_triton</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x_scales_triton</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                                           <span class="n">w_scales_triton</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">w_scales_triton</span><span class="o">.</span><span class="n">stride</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">BLOCK_M</span><span class="p">,</span> <span class="n">BLOCK_N</span><span class="p">,</span>
+                                           <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;BLOCK_K&quot;</span><span class="p">],</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;mfma_nonkdim&quot;</span><span class="p">],</span> <span class="n">num_warps</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s2">&quot;num_warps&quot;</span><span class="p">],</span>
+                                           <span class="n">num_stages</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s2">&quot;num_stages&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">kernel_kwargs</span><span class="p">)</span>
+    <span class="n">triton_out</span> <span class="o">=</span> <span class="n">triton_out</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">triton_out</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">bench_block_scaled_amd</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="s2">&quot;mxfp4&quot;</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">K</span> <span class="o">%</span> <span class="mi">128</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="mi">8192</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">8192</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem Shape = </span><span class="si">{</span><span class="n">M</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">K</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">x_mxfp4</span><span class="p">,</span> <span class="n">w_mxfp4</span><span class="p">,</span> <span class="n">x_scales</span><span class="p">,</span> <span class="n">w_scales</span><span class="p">,</span> <span class="n">x_scales_triton</span><span class="p">,</span> <span class="n">w_scales_triton</span><span class="p">,</span> <span class="n">configs</span> <span class="o">=</span> \
+    <span class="n">initialize_block_scaled_amd</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x_mxfp4</span><span class="o">.</span><span class="n">to_packed_tensor</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w_mxfp4</span><span class="o">.</span><span class="n">to_packed_tensor</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">proton</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">block_scaled_matmul_amd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x_scales_triton</span><span class="p">,</span> <span class="n">w_scales_triton</span><span class="p">,</span> <span class="n">configs</span><span class="p">)</span>
+    <span class="n">proton</span><span class="o">.</span><span class="n">deactivate</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done benchmarking&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-K&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--K_range&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--K_step&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bench&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mxfp4&quot;</span><span class="p">,</span> <span class="s2">&quot;nvfp4&quot;</span><span class="p">,</span> <span class="s2">&quot;mxfp8&quot;</span><span class="p">,</span> <span class="s2">&quot;mixed&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;nvfp4&quot;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">supports_block_scaling</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⛔ This example requires GPU support for block scaled matmul&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">K</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">K_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">K_range</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">K</span><span class="p">]</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">K_step</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># doesn&#39;t matter as long as it&#39;s not 0</span>
+
+        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_cuda</span><span class="p">():</span>
+            <span class="n">validate_block_scaled</span><span class="p">(</span><span class="mi">8192</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">is_hip_cdna4</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s2">&quot;mxfp4&quot;</span><span class="p">,</span> <span class="s2">&quot;AMD tutorial only supports mxpf4 format currently&quot;</span>
+            <span class="n">validate_block_scaled_amd</span><span class="p">(</span><span class="mi">8192</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+            <span class="n">validate_block_scaled_amd</span><span class="p">(</span><span class="mi">8192</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">bench</span><span class="p">:</span>
+            <span class="n">proton</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;block_scaled_matmul&quot;</span><span class="p">,</span> <span class="n">hook</span><span class="o">=</span><span class="s2">&quot;triton&quot;</span><span class="p">)</span>
+            <span class="n">proton</span><span class="o">.</span><span class="n">deactivate</span><span class="p">()</span>  <span class="c1"># Skip argument creation</span>
+            <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">K_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="o">.</span><span class="n">K_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">K_step</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">is_cuda</span><span class="p">():</span>
+                    <span class="n">bench_block_scaled</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">is_hip_cdna4</span><span class="p">():</span>
+                    <span class="n">bench_block_scaled_amd</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+                    <span class="n">bench_block_scaled_amd</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">block_scale_type</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">mfma_nonkdim</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+            <span class="n">proton</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+            <span class="n">show_profile</span><span class="p">(</span><span class="s2">&quot;block_scaled_matmul&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>✅ (pass nvfp4 - Triton and cuBLAS)
+Problem Shape = 8192x8192x512
+Done benchmarking
+nan 979.131 ROOT
+├─ 1050.114 654.400 block_scaled_matmul_kernel_nvfp4 [M=8192, N=8192, K=512]
+└─ 2116.198 324.731 cublas [M=8192, N=8192, K=512]
+   └─ nan 324.731 nvjet_sm100_oohsh_128x256_256x5_2x1_2cta_v_bz_Avec16UE4M3_Bvec16UE4M3_TNT
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.628 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-getting-started-tutorials-10-block-scaled-matmul-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/336ead1bb945ae9dc42eab20e58658f6/10-block-scaled-matmul.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">10-block-scaled-matmul.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/7a436dea87c87cdd7fe4529b2fc64d53/10-block-scaled-matmul.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">10-block-scaled-matmul.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/3790c08ba249d4a4a4e22801792cc0e1/10-block-scaled-matmul.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">10-block-scaled-matmul.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="09-persistent-matmul.html" class="btn btn-neutral float-left" title="Persistent Matmul" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../python-api/triton.html" class="btn btn-neutral float-right" title="triton" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Philippe Tillet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
