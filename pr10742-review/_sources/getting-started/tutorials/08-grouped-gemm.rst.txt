@@ -25,50 +25,6 @@ of gemms. The scheduling is static and we do it on device.
 
 .. GENERATED FROM PYTHON SOURCE LINES 7-566
 
-
-
-.. rst-class:: sphx-glr-horizontal
-
-
-    *
-
-      .. image-sg:: /getting-started/tutorials/images/sphx_glr_08-grouped-gemm_001.png
-         :alt: 08 grouped gemm
-         :srcset: /getting-started/tutorials/images/sphx_glr_08-grouped-gemm_001.png
-         :class: sphx-glr-multi-img
-
-    *
-
-      .. image-sg:: /getting-started/tutorials/images/sphx_glr_08-grouped-gemm_002.png
-         :alt: 08 grouped gemm
-         :srcset: /getting-started/tutorials/images/sphx_glr_08-grouped-gemm_002.png
-         :class: sphx-glr-multi-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    group-gemm-performance:
-            N  cuBLAS (runtime(ms))  Triton (runtime(ms))  Triton + TMA (runtime(ms))
-    0   128.0              0.016384              0.010240                    0.012224
-    1   256.0              0.018400              0.012192                    0.012352
-    2   512.0              0.020480              0.014336                    0.014336
-    3  1024.0              0.027584              0.028608                    0.026592
-    group-gemm-performance-m-8192-k-8192:
-            M  cuBLAS (runtime(ms))  Triton (runtime(ms))  Triton + TMA (runtime(ms))
-    0   128.0              0.114688              0.157696                    0.133024
-    1   256.0              0.140240              0.286656                    0.228256
-    2   512.0              0.229504              0.531520                    0.400416
-    3  1024.0              0.404512              0.979952                    0.752704
-
-
-
-
-
-
-|
-
 .. code-block:: Python
 
 
@@ -630,11 +586,6 @@ of gemms. The scheduling is static and we do it on device.
 
     benchmark_square_matrices.run(show_plots=True, print_data=True)
     benchmark_batches.run(show_plots=True, print_data=True)
-
-
-.. rst-class:: sphx-glr-timing
-
-   **Total running time of the script:** (0 minutes 14.699 seconds)
 
 
 .. _sphx_glr_download_getting-started_tutorials_08-grouped-gemm.py:

@@ -88,6 +88,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/gluon/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gluon/api/index.html">API Reference</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Triton MLIR Dialects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dialects/dialects.html">Triton MLIR Dialects and Ops</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-1/introduction.html">Introduction</a></li>
@@ -184,11 +188,6 @@ Triton automatically selects the correct underlying device function to invoke ba
       <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">output_torch</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">output_triton</span><span class="p">))</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>tensor([0.4105, 0.5430, 0.0249,  ..., 0.0424, 0.5351, 0.8149], device=&#39;cuda:0&#39;)
-tensor([0.4105, 0.5430, 0.0249,  ..., 0.0424, 0.5351, 0.8149], device=&#39;cuda:0&#39;)
-The maximum difference between torch and triton is 2.384185791015625e-07
-</pre></div>
-</div>
 </section>
 <section id="customize-the-libdevice-library-path">
 <h2>Customize the libdevice library path<a class="headerlink" href="#customize-the-libdevice-library-path" title="Link to this heading"></a></h2>
@@ -224,37 +223,6 @@ The maximum difference between torch and triton is 2.384185791015625e-07
       <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">output_torch</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">output_triton</span><span class="p">))</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/projects/kzhou6/bcui2/research/_docfull/python/tutorials/07-extern-functions.py&quot;</span>, line <span class="m">95</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="n">asin_kernel</span><span class="p">[</span><span class="n">grid</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">output_triton</span><span class="p">,</span> <span class="n">n_elements</span><span class="p">,</span> <span class="n">BLOCK_SIZE</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">extern_libs</span><span class="o">=</span><span class="n">extern_libs</span><span class="p">)</span>
-  File <span class="nb">&quot;/projects/kzhou6/bcui2/research/_docfull/python/triton/runtime/jit.py&quot;</span>, line <span class="m">374</span>, in <span class="n">&lt;lambda&gt;</span>
-<span class="w">    </span><span class="k">return</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="w">                                   </span><span class="pm">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class="nb">&quot;/projects/kzhou6/bcui2/research/_docfull/python/triton/runtime/jit.py&quot;</span>, line <span class="m">766</span>, in <span class="n">run</span>
-<span class="w">    </span><span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_compile</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">constexprs</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">warmup</span><span class="p">)</span>
-<span class="w">             </span><span class="pm">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class="nb">&quot;/projects/kzhou6/bcui2/research/_docfull/python/triton/runtime/jit.py&quot;</span>, line <span class="m">911</span>, in <span class="n">_do_compile</span>
-<span class="w">    </span><span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
-<span class="w">             </span><span class="pm">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class="nb">&quot;/projects/kzhou6/bcui2/research/_docfull/python/triton/compiler/compiler.py&quot;</span>, line <span class="m">261</span>, in <span class="n">compile</span>
-<span class="w">    </span><span class="n">key</span> <span class="o">=</span> <span class="n">get_cache_key</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">env_vars</span><span class="o">=</span><span class="n">env_vars</span><span class="p">)</span>
-<span class="w">          </span><span class="pm">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class="nb">&quot;/projects/kzhou6/bcui2/research/_docfull/python/triton/runtime/cache.py&quot;</span>, line <span class="m">320</span>, in <span class="n">get_cache_key</span>
-<span class="w">    </span><span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">triton_key</span><span class="p">()</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">backend_options</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">env_vars</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="w">                                                          </span><span class="pm">^^^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class="nb">&quot;/projects/kzhou6/bcui2/research/_docfull/python/triton/backends/nvidia/compiler.py&quot;</span>, line <span class="m">155</span>, in <span class="n">hash</span>
-<span class="w">    </span><span class="n">hash_dict</span><span class="p">[</span><span class="s2">&quot;extern_libs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">file_hash</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hash_dict</span><span class="p">[</span><span class="s2">&quot;extern_libs&quot;</span><span class="p">]))</span>
-<span class="w">                               </span><span class="pm">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class="nb">&quot;/projects/kzhou6/bcui2/research/_docfull/python/triton/backends/nvidia/compiler.py&quot;</span>, line <span class="m">155</span>, in <span class="n">&lt;genexpr&gt;</span>
-<span class="w">    </span><span class="n">hash_dict</span><span class="p">[</span><span class="s2">&quot;extern_libs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">file_hash</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hash_dict</span><span class="p">[</span><span class="s2">&quot;extern_libs&quot;</span><span class="p">]))</span>
-<span class="w">                                         </span><span class="pm">^^^^^^^^^^^^</span>
-  File <span class="nb">&quot;/projects/kzhou6/bcui2/research/_docfull/python/triton/backends/nvidia/compiler.py&quot;</span>, line <span class="m">99</span>, in <span class="n">file_hash</span>
-<span class="w">    </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-<span class="w">         </span><span class="pm">^^^^^^^^^^^^^^^^</span>
-<span class="gr">FileNotFoundError</span>: <span class="n">[Errno 2] No such file or directory: &#39;/projects/kzhou6/bcui2/research/_docfull/third_party/nvidia/backend/lib/libdevice.10.bc&#39;</span>
-</pre></div>
-</div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.300 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-getting-started-tutorials-07-extern-functions-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/859d98d69fb02c33053d474c27761677/07-extern-functions.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">07-extern-functions.ipynb</span></code></a></p>

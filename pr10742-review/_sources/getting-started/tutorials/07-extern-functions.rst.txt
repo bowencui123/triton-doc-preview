@@ -69,12 +69,6 @@ asin Kernel
 
 
 
-
-
-
-
-
-
 .. GENERATED FROM PYTHON SOURCE LINES 48-51
 
 Using the default libdevice library path
@@ -99,20 +93,6 @@ We can use the default libdevice library path encoded in `triton/language/math.p
     print(output_triton)
     print(f'The maximum difference between torch and triton is '
           f'{torch.max(torch.abs(output_torch - output_triton))}')
-
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    tensor([0.4105, 0.5430, 0.0249,  ..., 0.0424, 0.5351, 0.8149], device='cuda:0')
-    tensor([0.4105, 0.5430, 0.0249,  ..., 0.0424, 0.5351, 0.8149], device='cuda:0')
-    The maximum difference between torch and triton is 2.384185791015625e-07
-
 
 
 
@@ -155,48 +135,6 @@ We can also customize the libdevice library path by passing the path to the `lib
     print(output_triton)
     print(f'The maximum difference between torch and triton is '
           f'{torch.max(torch.abs(output_torch - output_triton))}')
-
-
-.. rst-class:: sphx-glr-script-out
-
-.. code-block:: pytb
-
-    Traceback (most recent call last):
-      File "/projects/kzhou6/bcui2/research/_docfull/python/tutorials/07-extern-functions.py", line 95, in <module>
-        asin_kernel[grid](x, output_triton, n_elements, BLOCK_SIZE=1024, extern_libs=extern_libs)
-      File "/projects/kzhou6/bcui2/research/_docfull/python/triton/runtime/jit.py", line 374, in <lambda>
-        return lambda *args, **kwargs: self.run(grid=grid, warmup=False, *args, **kwargs)
-                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      File "/projects/kzhou6/bcui2/research/_docfull/python/triton/runtime/jit.py", line 766, in run
-        kernel = self._do_compile(key, signature, device, constexprs, options, attrs, warmup)
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      File "/projects/kzhou6/bcui2/research/_docfull/python/triton/runtime/jit.py", line 911, in _do_compile
-        kernel = self.compile(src, target=target, options=options.__dict__)
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      File "/projects/kzhou6/bcui2/research/_docfull/python/triton/compiler/compiler.py", line 261, in compile
-        key = get_cache_key(src, backend, options, env_vars=env_vars)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      File "/projects/kzhou6/bcui2/research/_docfull/python/triton/runtime/cache.py", line 320, in get_cache_key
-        key = f"{triton_key()}-{src.hash()}-{backend.hash()}-{backend_options.hash()}-{str(sorted(env_vars.items()))}"
-                                                              ^^^^^^^^^^^^^^^^^^^^^^
-      File "/projects/kzhou6/bcui2/research/_docfull/python/triton/backends/nvidia/compiler.py", line 155, in hash
-        hash_dict["extern_libs"] = tuple((k, file_hash(v)) for k, v in sorted(hash_dict["extern_libs"]))
-                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      File "/projects/kzhou6/bcui2/research/_docfull/python/triton/backends/nvidia/compiler.py", line 155, in <genexpr>
-        hash_dict["extern_libs"] = tuple((k, file_hash(v)) for k, v in sorted(hash_dict["extern_libs"]))
-                                             ^^^^^^^^^^^^
-      File "/projects/kzhou6/bcui2/research/_docfull/python/triton/backends/nvidia/compiler.py", line 99, in file_hash
-        with open(path, "rb") as f:
-             ^^^^^^^^^^^^^^^^
-    FileNotFoundError: [Errno 2] No such file or directory: '/projects/kzhou6/bcui2/research/_docfull/third_party/nvidia/backend/lib/libdevice.10.bc'
-
-
-
-
-
-.. rst-class:: sphx-glr-timing
-
-   **Total running time of the script:** (0 minutes 0.300 seconds)
 
 
 .. _sphx_glr_download_getting-started_tutorials_07-extern-functions.py:

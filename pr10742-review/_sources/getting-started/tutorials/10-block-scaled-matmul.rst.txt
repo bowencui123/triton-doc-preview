@@ -776,30 +776,6 @@ For more detailed information on the scale factor layout, see
                 show_profile("block_scaled_matmul")
 
 
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    ✅ (pass nvfp4 - Triton and cuBLAS)
-    Problem Shape = 8192x8192x512
-    Done benchmarking
-    nan 979.131 ROOT
-    ├─ 1050.114 654.400 block_scaled_matmul_kernel_nvfp4 [M=8192, N=8192, K=512]
-    └─ 2116.198 324.731 cublas [M=8192, N=8192, K=512]
-       └─ nan 324.731 nvjet_sm100_oohsh_128x256_256x5_2x1_2cta_v_bz_Avec16UE4M3_Bvec16UE4M3_TNT
-
-
-
-
-
-
-.. rst-class:: sphx-glr-timing
-
-   **Total running time of the script:** (0 minutes 2.628 seconds)
-
-
 .. _sphx_glr_download_getting-started_tutorials_10-block-scaled-matmul.py:
 
 .. only:: html

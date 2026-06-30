@@ -39,67 +39,6 @@ Note that currently this tutorial will fail on devices with a small shared memor
 
 .. GENERATED FROM PYTHON SOURCE LINES 21-759
 
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    M=32, N=32, K=32, verification naive vs: 
-      Torch: ...      Torch: ✅  
-      cuBLAS: ...      cuBLAS: ✅  
-      Persistent: ...      Persistent: ✅  
-      TMA (warp_specialize=False): ...      TMA (warp_specialize=False): ✅  
-      TMA (warp_specialize=True): ...      TMA (warp_specialize=True): ✅  
-      TMA Persistent (warp_specialize=False): ...      TMA Persistent (warp_specialize=False): ✅  
-      TMA Persistent (warp_specialize=True): ...      TMA Persistent (warp_specialize=True): ✅  
-      Tensor Descriptor Persistent (warp_specialize=False): ...      Tensor Descriptor Persistent (warp_specialize=False): ✅  
-      Tensor Descriptor Persistent (warp_specialize=True): ...      Tensor Descriptor Persistent (warp_specialize=True): ✅  
-
-    M=8192, N=8192, K=512, verification naive vs: 
-      Torch: ...      Torch: ✅  
-      cuBLAS: ...      cuBLAS: ✅  
-      Persistent: ...      Persistent: ✅  
-      TMA (warp_specialize=False): ...      TMA (warp_specialize=False): ✅  
-      TMA (warp_specialize=True): ...      TMA (warp_specialize=True): ✅  
-      TMA Persistent (warp_specialize=False): ...      TMA Persistent (warp_specialize=False): ✅  
-      TMA Persistent (warp_specialize=True): ...      TMA Persistent (warp_specialize=True): ✅  
-      Tensor Descriptor Persistent (warp_specialize=False): ...      Tensor Descriptor Persistent (warp_specialize=False): ✅  
-      Tensor Descriptor Persistent (warp_specialize=True): ...      Tensor Descriptor Persistent (warp_specialize=True): ✅  
-
-    Benchmarking cuBLAS: ...    Benchmarking cuBLAS: done
-    Benchmarking torch: ...    Benchmarking torch: done
-    Benchmarking naive: ...    Benchmarking naive: done
-    Benchmarking persistent: ...    Benchmarking persistent: done
-    Benchmarking tma_persistent: ...    Benchmarking tma_persistent: done
-    Benchmarking tma: ...    Benchmarking tma: done
-    Benchmarking descriptor_persistent: ...    Benchmarking descriptor_persistent: done
-    Benchmarking tma_persistent_ws: ...    Benchmarking tma_persistent_ws: done
-    Benchmarking tma_ws: ...    Benchmarking tma_ws: done
-    Benchmarking descriptor_persistent_ws: ...    Benchmarking descriptor_persistent_ws: done
-    nan 8251.994 ROOT
-    ├─ 930.237 738.731 cuBLAS [M=8192, N=8192, K=512]
-    │  └─ nan 738.731 nvjet_sm100_hsh_128x256_64x6_2x1_2cta_v_bz_TNT
-    ├─ 718.410 956.550 matmul_kernel [M=8192, N=8192, K=512]
-    ├─ 844.788 813.452 matmul_kernel_descriptor_persistent [M=8192, N=8192, K=512]
-    ├─ 901.163 762.564 matmul_kernel_descriptor_persistent_ws [M=8192, N=8192, K=512]
-    ├─ 741.598 926.640 matmul_kernel_persistent [M=8192, N=8192, K=512]
-    ├─ 794.082 865.395 matmul_kernel_tma [M=8192, N=8192, K=512]
-    ├─ 893.921 768.742 matmul_kernel_tma_persistent [M=8192, N=8192, K=512]
-    ├─ 1002.535 685.457 matmul_kernel_tma_persistent_ws [M=8192, N=8192, K=512]
-    ├─ 679.933 1010.680 matmul_kernel_tma_ws [M=8192, N=8192, K=512]
-    └─ 949.450 723.782 torch [M=8192, N=8192, K=512]
-       └─ nan 723.782 nvjet_hsh_256x256_64x4_2x1_2cta_v_bz_TNT
-
-
-
-
-
-
-
-|
-
 .. code-block:: Python
 
 
@@ -840,11 +779,6 @@ Note that currently this tutorial will fail on devices with a small shared memor
                 bench(K, dtype)
             proton.finalize()
             show_profile(args.prec, "matmul")
-
-
-.. rst-class:: sphx-glr-timing
-
-   **Total running time of the script:** (3 minutes 25.597 seconds)
 
 
 .. _sphx_glr_download_getting-started_tutorials_09-persistent-matmul.py:

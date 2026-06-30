@@ -78,12 +78,6 @@ Compute Kernel
 
 
 
-
-
-
-
-
-
 .. GENERATED FROM PYTHON SOURCE LINES 58-60
 
 Let's also declare a helper function to (1) allocate the `z` tensor
@@ -115,12 +109,6 @@ and (2) enqueue the above kernel with appropriate grid/block sizes:
 
 
 
-
-
-
-
-
-
 .. GENERATED FROM PYTHON SOURCE LINES 82-83
 
 We can now use the above function to compute the element-wise sum of two `torch.tensor` objects and test its correctness:
@@ -140,20 +128,6 @@ We can now use the above function to compute the element-wise sum of two `torch.
     print(output_triton)
     print(f'The maximum difference between torch and triton is '
           f'{torch.max(torch.abs(output_torch - output_triton))}')
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    tensor([1.3713, 1.3076, 0.4940,  ..., 0.6724, 1.2141, 0.9733], device='cuda:0')
-    tensor([1.3713, 1.3076, 0.4940,  ..., 0.6724, 1.2141, 0.9733], device='cuda:0')
-    The maximum difference between torch and triton is 0.0
-
-
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 96-97
@@ -201,12 +175,6 @@ for different problem sizes.
 
 
 
-
-
-
-
-
-
 .. GENERATED FROM PYTHON SOURCE LINES 133-135
 
 We can now run the decorated function above. Pass `print_data=True` to see the performance number, `show_plots=True` to plot them, and/or
@@ -217,45 +185,6 @@ We can now run the decorated function above. Pass `print_data=True` to see the p
 .. code-block:: Python
 
     benchmark.run(print_data=True, show_plots=True)
-
-
-
-.. image-sg:: /getting-started/tutorials/images/sphx_glr_01-vector-add_001.png
-   :alt: 01 vector add
-   :srcset: /getting-started/tutorials/images/sphx_glr_01-vector-add_001.png
-   :class: sphx-glr-single-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    vector-add-performance:
-               size  Triton (GB/s)  Torch (GB/s)
-    0        4096.0       7.958549      7.917526
-    1        8192.0      15.835052     15.835052
-    2       16384.0      31.670104     31.670104
-    3       32768.0      63.340208     63.340208
-    4       65536.0     126.680417    126.680417
-    5      131072.0     252.061538    252.061538
-    6      262144.0     387.023602    385.505895
-    7      524288.0     765.011652    765.011652
-    8     1048576.0    1524.093109   1524.093109
-    9     2097152.0    2442.335350   2442.335350
-    10    4194304.0    3495.253393   3495.253393
-    11    8388608.0    4455.705252   4455.705252
-    12   16777216.0    5442.436199   5437.732242
-    13   33554432.0    6135.013111   6061.133020
-    14   67108864.0    6492.730743   6550.188583
-    15  134217728.0    6751.394598   6751.394598
-
-
-
-
-
-.. rst-class:: sphx-glr-timing
-
-   **Total running time of the script:** (0 minutes 18.220 seconds)
 
 
 .. _sphx_glr_download_getting-started_tutorials_01-vector-add.py:

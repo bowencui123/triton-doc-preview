@@ -86,6 +86,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/gluon/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gluon/api/index.html">API Reference</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Triton MLIR Dialects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dialects/dialects.html">Triton MLIR Dialects and Ops</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-1/introduction.html">Introduction</a></li>
@@ -869,16 +873,6 @@ the 2D layout [1] expected by tl.dot_scaled.</p>
             <span class="n">show_profile</span><span class="p">(</span><span class="s2">&quot;block_scaled_matmul&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>✅ (pass nvfp4 - Triton and cuBLAS)
-Problem Shape = 8192x8192x512
-Done benchmarking
-nan 979.131 ROOT
-├─ 1050.114 654.400 block_scaled_matmul_kernel_nvfp4 [M=8192, N=8192, K=512]
-└─ 2116.198 324.731 cublas [M=8192, N=8192, K=512]
-   └─ nan 324.731 nvjet_sm100_oohsh_128x256_256x5_2x1_2cta_v_bz_Avec16UE4M3_Bvec16UE4M3_TNT
-</pre></div>
-</div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.628 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-getting-started-tutorials-10-block-scaled-matmul-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/336ead1bb945ae9dc42eab20e58658f6/10-block-scaled-matmul.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">10-block-scaled-matmul.ipynb</span></code></a></p>

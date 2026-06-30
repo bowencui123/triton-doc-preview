@@ -109,24 +109,6 @@ Let's first take a look at the baseline implementation.
     ]))
 
 
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    /projects/kzhou6/bcui2/research/_docfull/python/triton/language/semantic.py:1675: UserWarning: tl.where with a non-boolean condition is deprecated and will error out in a future triton release. Got int32
-      warnings.warn(
-    ---------  --------  --------  --------  ---------  --------  -------  --------  ---------  -------  ---------
-    input      0.967056  0.530233  -1.17836  0.0785857  -2.31472  1.0161   -1.14004  -0.130931  0.47211  0.0369672
-    keep mask  0         1          1        0           0        1         0         1         0        0
-    output     0         1.06047   -2.35672  0           0        2.03221   0        -0.261862  0        0
-    ---------  --------  --------  --------  ---------  --------  -------  --------  ---------  -------  ---------
-
-
-
-
 .. GENERATED FROM PYTHON SOURCE LINES 89-108
 
 Seeded dropout
@@ -203,23 +185,6 @@ Let's put it all together.
         ]))
 
 
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    -------------------  ----------  --------  --------  ---------  -------  --------  --------  --------  --------  ----------
-    input                -0.0258649  0.189004  -1.45879  -0.873716  2.44319  -1.55857  -1.87125  -1.63165  0.803157  -0.0884286
-    output (seed = 123)   0          0.378009   0         0         0        -3.11713   0         0        1.60631   -0.176857
-    output (seed = 123)   0          0.378009   0         0         0        -3.11713   0         0        1.60631   -0.176857
-    output (seed = 512)   0          0         -2.91758  -1.74743   0        -3.11713  -3.7425    0        0          0
-    -------------------  ----------  --------  --------  ---------  -------  --------  --------  --------  --------  ----------
-
-
-
-
 .. GENERATED FROM PYTHON SOURCE LINES 158-161
 
 Et Voilà! We have a triton kernel that applies the same dropout mask provided the seed is the same!
@@ -242,11 +207,6 @@ References
 
 .. [SALMON2011] John K. Salmon, Mark A. Moraes, Ron O. Dror, and David E. Shaw, "Parallel Random Numbers: As Easy as 1, 2, 3", 2011
 .. [SRIVASTAVA2014] Nitish Srivastava and Geoffrey Hinton and Alex Krizhevsky and Ilya Sutskever and Ruslan Salakhutdinov, "Dropout: A Simple Way to Prevent Neural Networks from Overfitting", JMLR 2014
-
-
-.. rst-class:: sphx-glr-timing
-
-   **Total running time of the script:** (0 minutes 1.027 seconds)
 
 
 .. _sphx_glr_download_getting-started_tutorials_04-low-memory-dropout.py:

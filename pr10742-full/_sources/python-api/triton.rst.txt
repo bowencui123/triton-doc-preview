@@ -11,8 +11,6 @@ Compilation
     :nosignatures:
 
     compile
-    AsyncCompileMode
-    FutureKernel
 
 
 JIT

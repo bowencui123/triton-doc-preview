@@ -83,6 +83,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/gluon/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gluon/api/index.html">API Reference</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Triton MLIR Dialects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dialects/dialects.html">Triton MLIR Dialects and Ops</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-1/introduction.html">Introduction</a></li>
@@ -125,27 +129,6 @@ to download the full example code.</p>
 <span id="sphx-glr-getting-started-tutorials-08-grouped-gemm-py"></span><h1>Group GEMM<a class="headerlink" href="#group-gemm" title="Link to this heading"></a></h1>
 <p>This group gemm kernel launches a fixed number of CTA to compute a group
 of gemms. The scheduling is static and we do it on device.</p>
-<ul class="sphx-glr-horizontal">
-<li><img src="../../_images/sphx_glr_08-grouped-gemm_001.png" srcset="../../_images/sphx_glr_08-grouped-gemm_001.png" alt="08 grouped gemm" class = "sphx-glr-multi-img"/></li>
-<li><img src="../../_images/sphx_glr_08-grouped-gemm_002.png" srcset="../../_images/sphx_glr_08-grouped-gemm_002.png" alt="08 grouped gemm" class = "sphx-glr-multi-img"/></li>
-</ul>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>group-gemm-performance:
-        N  cuBLAS (runtime(ms))  Triton (runtime(ms))  Triton + TMA (runtime(ms))
-0   128.0              0.016384              0.010240                    0.012224
-1   256.0              0.018400              0.012192                    0.012352
-2   512.0              0.020480              0.014336                    0.014336
-3  1024.0              0.027584              0.028608                    0.026592
-group-gemm-performance-m-8192-k-8192:
-        M  cuBLAS (runtime(ms))  Triton (runtime(ms))  Triton + TMA (runtime(ms))
-0   128.0              0.114688              0.157696                    0.133024
-1   256.0              0.140240              0.286656                    0.228256
-2   512.0              0.229504              0.531520                    0.400416
-3  1024.0              0.404512              0.979952                    0.752704
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright (c) 2023 - 2025 NVIDIA Corporation &amp; Affiliates. All rights reserved.</span>
 <span class="c1">#</span>
 <span class="c1"># Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -706,7 +689,6 @@ group-gemm-performance-m-8192-k-8192:
 <span class="n">benchmark_batches</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">print_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 14.699 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-getting-started-tutorials-08-grouped-gemm-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/6360f3425f2c39f9f330971830c25ba7/08-grouped-gemm.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">08-grouped-gemm.ipynb</span></code></a></p>

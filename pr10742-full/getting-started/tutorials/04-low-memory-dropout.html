@@ -90,6 +90,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/gluon/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gluon/api/index.html">API Reference</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Triton MLIR Dialects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dialects/dialects.html">Triton MLIR Dialects and Ops</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-1/introduction.html">Introduction</a></li>
@@ -204,15 +208,6 @@ keeps the norm consistent regardless of the dropout probability.</p>
 <span class="p">]))</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/projects/kzhou6/bcui2/research/_docfull/python/triton/language/semantic.py:1675: UserWarning: tl.where with a non-boolean condition is deprecated and will error out in a future triton release. Got int32
-  warnings.warn(
----------  --------  --------  --------  ---------  --------  -------  --------  ---------  -------  ---------
-input      0.967056  0.530233  -1.17836  0.0785857  -2.31472  1.0161   -1.14004  -0.130931  0.47211  0.0369672
-keep mask  0         1          1        0           0        1         0         1         0        0
-output     0         1.06047   -2.35672  0           0        2.03221   0        -0.261862  0        0
----------  --------  --------  --------  ---------  --------  -------  --------  ---------  -------  ---------
-</pre></div>
-</div>
 </section>
 <section id="seeded-dropout">
 <h2>Seeded dropout<a class="headerlink" href="#seeded-dropout" title="Link to this heading"></a></h2>
@@ -279,14 +274,6 @@ other <a class="reference internal" href="../../python-api/triton.language.html#
     <span class="p">]))</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>-------------------  ----------  --------  --------  ---------  -------  --------  --------  --------  --------  ----------
-input                -0.0258649  0.189004  -1.45879  -0.873716  2.44319  -1.55857  -1.87125  -1.63165  0.803157  -0.0884286
-output (seed = 123)   0          0.378009   0         0         0        -3.11713   0         0        1.60631   -0.176857
-output (seed = 123)   0          0.378009   0         0         0        -3.11713   0         0        1.60631   -0.176857
-output (seed = 512)   0          0         -2.91758  -1.74743   0        -3.11713  -3.7425    0        0          0
--------------------  ----------  --------  --------  ---------  -------  --------  --------  --------  --------  ----------
-</pre></div>
-</div>
 <p>Et Voilà! We have a triton kernel that applies the same dropout mask provided the seed is the same!
 If you’d like explore further applications of pseudorandomness in GPU programming, we encourage you
 to explore the <cite>python/triton/language/random.py</cite>!</p>
@@ -311,7 +298,6 @@ to explore the <cite>python/triton/language/random.py</cite>!</p>
 <p>Nitish Srivastava and Geoffrey Hinton and Alex Krizhevsky and Ilya Sutskever and Ruslan Salakhutdinov, “Dropout: A Simple Way to Prevent Neural Networks from Overfitting”, JMLR 2014</p>
 </div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.027 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-getting-started-tutorials-04-low-memory-dropout-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/bc847dec325798bdc436c4ef5ac8b78a/04-low-memory-dropout.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">04-low-memory-dropout.ipynb</span></code></a></p>

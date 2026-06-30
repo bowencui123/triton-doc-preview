@@ -83,6 +83,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/gluon/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gluon/api/index.html">API Reference</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Triton MLIR Dialects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dialects/dialects.html">Triton MLIR Dialects and Ops</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-1/introduction.html">Introduction</a></li>
@@ -136,84 +140,6 @@ python<span class="w"> </span><span class="m">09</span>-persistent-matmul.py<spa
 </pre></div>
 </div>
 <p>Note that currently this tutorial will fail on devices with a small shared memory size, such as RTX-4090.</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>M=32, N=32, K=32, verification naive vs:
-  Torch: ...
-  Torch: ✅
-  cuBLAS: ...
-  cuBLAS: ✅
-  Persistent: ...
-  Persistent: ✅
-  TMA (warp_specialize=False): ...
-  TMA (warp_specialize=False): ✅
-  TMA (warp_specialize=True): ...
-  TMA (warp_specialize=True): ✅
-  TMA Persistent (warp_specialize=False): ...
-  TMA Persistent (warp_specialize=False): ✅
-  TMA Persistent (warp_specialize=True): ...
-  TMA Persistent (warp_specialize=True): ✅
-  Tensor Descriptor Persistent (warp_specialize=False): ...
-  Tensor Descriptor Persistent (warp_specialize=False): ✅
-  Tensor Descriptor Persistent (warp_specialize=True): ...
-  Tensor Descriptor Persistent (warp_specialize=True): ✅
-
-M=8192, N=8192, K=512, verification naive vs:
-  Torch: ...
-  Torch: ✅
-  cuBLAS: ...
-  cuBLAS: ✅
-  Persistent: ...
-  Persistent: ✅
-  TMA (warp_specialize=False): ...
-  TMA (warp_specialize=False): ✅
-  TMA (warp_specialize=True): ...
-  TMA (warp_specialize=True): ✅
-  TMA Persistent (warp_specialize=False): ...
-  TMA Persistent (warp_specialize=False): ✅
-  TMA Persistent (warp_specialize=True): ...
-  TMA Persistent (warp_specialize=True): ✅
-  Tensor Descriptor Persistent (warp_specialize=False): ...
-  Tensor Descriptor Persistent (warp_specialize=False): ✅
-  Tensor Descriptor Persistent (warp_specialize=True): ...
-  Tensor Descriptor Persistent (warp_specialize=True): ✅
-
-Benchmarking cuBLAS: ...
-Benchmarking cuBLAS: done
-Benchmarking torch: ...
-Benchmarking torch: done
-Benchmarking naive: ...
-Benchmarking naive: done
-Benchmarking persistent: ...
-Benchmarking persistent: done
-Benchmarking tma_persistent: ...
-Benchmarking tma_persistent: done
-Benchmarking tma: ...
-Benchmarking tma: done
-Benchmarking descriptor_persistent: ...
-Benchmarking descriptor_persistent: done
-Benchmarking tma_persistent_ws: ...
-Benchmarking tma_persistent_ws: done
-Benchmarking tma_ws: ...
-Benchmarking tma_ws: done
-Benchmarking descriptor_persistent_ws: ...
-Benchmarking descriptor_persistent_ws: done
-nan 8251.994 ROOT
-├─ 930.237 738.731 cuBLAS [M=8192, N=8192, K=512]
-│  └─ nan 738.731 nvjet_sm100_hsh_128x256_64x6_2x1_2cta_v_bz_TNT
-├─ 718.410 956.550 matmul_kernel [M=8192, N=8192, K=512]
-├─ 844.788 813.452 matmul_kernel_descriptor_persistent [M=8192, N=8192, K=512]
-├─ 901.163 762.564 matmul_kernel_descriptor_persistent_ws [M=8192, N=8192, K=512]
-├─ 741.598 926.640 matmul_kernel_persistent [M=8192, N=8192, K=512]
-├─ 794.082 865.395 matmul_kernel_tma [M=8192, N=8192, K=512]
-├─ 893.921 768.742 matmul_kernel_tma_persistent [M=8192, N=8192, K=512]
-├─ 1002.535 685.457 matmul_kernel_tma_persistent_ws [M=8192, N=8192, K=512]
-├─ 679.933 1010.680 matmul_kernel_tma_ws [M=8192, N=8192, K=512]
-└─ 949.450 723.782 torch [M=8192, N=8192, K=512]
-   └─ nan 723.782 nvjet_hsh_256x256_64x4_2x1_2cta_v_bz_TNT
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 
@@ -953,7 +879,6 @@ nan 8251.994 ROOT
         <span class="n">show_profile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">prec</span><span class="p">,</span> <span class="s2">&quot;matmul&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (3 minutes 25.597 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-getting-started-tutorials-09-persistent-matmul-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/b5537c431cd73b8ee3c32cdf90c58104/09-persistent-matmul.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">09-persistent-matmul.ipynb</span></code></a></p>

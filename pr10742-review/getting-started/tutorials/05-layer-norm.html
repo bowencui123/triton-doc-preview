@@ -90,6 +90,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/gluon/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gluon/api/index.html">API Reference</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Triton MLIR Dialects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dialects/dialects.html">Triton MLIR Dialects and Ops</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-1/introduction.html">Introduction</a></li>
@@ -483,40 +487,6 @@ Specifically, one can set <code class="code docutils literal notranslate"><span 
 <span class="n">bench_layer_norm</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">print_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_05-layer-norm_001.png" srcset="../../_images/sphx_glr_05-layer-norm_001.png" alt="05 layer norm" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>layer-norm-backward:
-          N  Triton (GB/s)  Torch (GB/s)
-0    1024.0      45.303993    599.871867
-1    1536.0      68.140479    856.679734
-2    2048.0      90.545388   1047.179741
-3    2560.0     111.909385   1159.245288
-4    3072.0     135.195458   1249.627081
-5    3584.0     157.106856    303.591471
-6    4096.0     178.329250   1382.737526
-7    4608.0     201.328021    422.232779
-8    5120.0     224.515249   1396.859673
-9    5632.0     247.341017    335.456493
-10   6144.0     267.183382    365.131306
-11   6656.0     288.933309   1612.557768
-12   7168.0     313.319519   1637.912535
-13   7680.0     338.027378    622.636987
-14   8192.0     360.727924    636.207497
-15   8704.0     380.871305    660.997927
-16   9216.0     404.508542    672.611245
-17   9728.0     424.446304   1449.011596
-18  10240.0     448.927942   1480.760641
-19  10752.0     470.246936    821.645398
-20  11264.0     494.356939    688.452662
-21  11776.0     514.944362    701.164317
-22  12288.0     538.590579   1611.541015
-23  12800.0     556.490215   1635.129701
-24  13312.0     585.159580   1680.962783
-25  13824.0     605.741572   1709.910127
-26  14336.0     626.460787   1219.409449
-27  14848.0     653.632003   1755.428543
-28  15360.0     673.988297   1150.988384
-29  15872.0     699.672600   1805.880842
-</pre></div>
-</div>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
@@ -526,7 +496,6 @@ Specifically, one can set <code class="code docutils literal notranslate"><span 
 <p>Jimmy Lei Ba and Jamie Ryan Kiros and Geoffrey E. Hinton, “Layer Normalization”, Arxiv 2016</p>
 </div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 35.255 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-getting-started-tutorials-05-layer-norm-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/ae7fff29e1b574187bc930ed94bcc353/05-layer-norm.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">05-layer-norm.ipynb</span></code></a></p>

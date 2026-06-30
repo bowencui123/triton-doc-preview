@@ -87,6 +87,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/gluon/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gluon/api/index.html">API Reference</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Triton MLIR Dialects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dialects/dialects.html">Triton MLIR Dialects and Ops</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../programming-guide/chapter-1/introduction.html">Introduction</a></li>
@@ -206,11 +210,6 @@ and (2) enqueue the above kernel with appropriate grid/block sizes:</p>
       <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">output_torch</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">output_triton</span><span class="p">))</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>tensor([1.3713, 1.3076, 0.4940,  ..., 0.6724, 1.2141, 0.9733], device=&#39;cuda:0&#39;)
-tensor([1.3713, 1.3076, 0.4940,  ..., 0.6724, 1.2141, 0.9733], device=&#39;cuda:0&#39;)
-The maximum difference between torch and triton is 0.0
-</pre></div>
-</div>
 <p>Seems like we’re good to go!</p>
 </section>
 <section id="benchmark">
@@ -248,27 +247,6 @@ for different problem sizes.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">print_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_01-vector-add_001.png" srcset="../../_images/sphx_glr_01-vector-add_001.png" alt="01 vector add" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>vector-add-performance:
-           size  Triton (GB/s)  Torch (GB/s)
-0        4096.0       7.958549      7.917526
-1        8192.0      15.835052     15.835052
-2       16384.0      31.670104     31.670104
-3       32768.0      63.340208     63.340208
-4       65536.0     126.680417    126.680417
-5      131072.0     252.061538    252.061538
-6      262144.0     387.023602    385.505895
-7      524288.0     765.011652    765.011652
-8     1048576.0    1524.093109   1524.093109
-9     2097152.0    2442.335350   2442.335350
-10    4194304.0    3495.253393   3495.253393
-11    8388608.0    4455.705252   4455.705252
-12   16777216.0    5442.436199   5437.732242
-13   33554432.0    6135.013111   6061.133020
-14   67108864.0    6492.730743   6550.188583
-15  134217728.0    6751.394598   6751.394598
-</pre></div>
-</div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 18.220 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-getting-started-tutorials-01-vector-add-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/f191ee1e78dc52eb5f7cba88f71cef2f/01-vector-add.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01-vector-add.ipynb</span></code></a></p>
